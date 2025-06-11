@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>FHE-Compatible CNNs</title>
+  <meta name="author" content="Wei Ao">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <!-- Color ramp: ["#559EB1", "#6DB28B", "#8CBB68", "#AFBD4F", "#CFB541", "#E39B39", "#E56E30"] -->
+
+<section data-background-iframe="../assets/viz/gradient/">
+  <p class="title">FHE-Compatible CNNs</p>
+  <br />
+  <p class="author">Wei Ao</p>
+  <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+  <p class="subtitle"> CVPR 2025 Tutorial </p>
+  <p class="date">June 12, 2025</p>
+</section>
+
+<section>
+  <h2 class="r-fit-text">how to Adapt CNNs for FHE</h2>
+  <div id="left" style="width: 50%">
+    <div class="r-stack">
+      <img class="fragment current-visible" data-fragment-index="0"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-1.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="1"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-2.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="2"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-3.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="3"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-4.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="4"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-5.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="5"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-5.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="6"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-5.svg" width="65%" />
+      <img class="fragment current-visible" data-fragment-index="7"
+        src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-6.svg" width="65%" />
+      <img class="fragment" data-fragment-index="8" src="../assets/images/talks/base/autofhe/autofhe-cnn-fhe-7.svg"
+        width="65%" />
+    </div>
+  </div>
+  <div id="right" style="width: 50%">
+    <ul style="color: rgb(255, 255, 255)" class="fragment" data-fragment-index="5">
+      <li>Supported one-dimensional operations under FHE:</li>
+    </ul>
+    <ul style="color: yellowgreen" class="fragment" data-fragment-index="5">
+      <ul>
+        <li>Multiplication</li>
+        <li>Addition</li>
+        <li>Rotation</li>
+      </ul>
+    </ul>
+    <center style="color: #ff8080" class="fragment" data-fragment-index="6">
+      ReLU(x)=max(x,0)
+    </center>
+    <center class="fragment" data-fragment-index="8">
+      <i class="fa fa-arrow-up"></i> Approximate
+    </center>
+    <center class="fragment" data-fragment-index="8" style="color: lightblue">
+      $\mathcal{F}(x)=(f_k^{d_k}\circ f_{k-1}^{d_{k-1}}\circ \cdots \circ
+      f_1^{d_1})(x)$
+    </center>
+  </div>
+  <div id="left" style="width:100%;">
+    <blockquote class="fragment" data-fragment-index="9">Polynomial approximation for non-linear activations
+    </blockquote>
+    <blockquote class="fragment" data-fragment-index="10">Packing for convolution (Pooling): transfering: 3D operation
+      to 1D operation
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <h2>FHE-Compatible CNNs</h2>
+  <br>
+  <div id="left" style="width:50%;">
+    <br>
+    <table>
+      <tr>
+        <th>Operations</th>
+        <th>Support</th>
+      </tr>
+      <tr>
+        <td>Conv2D</td>
+        <td><span style="color: rgb(242, 255, 0)">Packing</span></td>
+      </tr>
+      <tr>
+        <td>BatchNorm2D</td>
+        <td><span>&#10003;</span></td>
+      </tr>
+      <tr>
+        <td>AvgPool</td>
+        <td><span style="color: rgb(242, 255, 0)">Packing</span></td>
+      </tr>
+      <tr>
+        <td>Linear</td>
+        <td><span>&#10003;</span></td>
+      </tr>
+      <tr>
+        <td>ReLU</td>
+        <td><span style="color: rgb(242, 255, 0)">Approximation</span></td>
+      </tr>
+      <tr>
+        <td>Bootstrapping</td>
+        <td><span>&#10003;</span></td>
+      </tr>
+    </table>
+  </div>
+  <div id="right" style="width:50%;">
+    <span class="fragment">
+      <center>
+        <div id="cnn_fhe_complexity" style="width:90%;"></div>
+      </center>
+      <script>
+        var d3colors = Plotly.d3.scale.category10();
+        var xlabels = ['Conv2D', 'BatchNorm2D', 'AvgPool', 'Linear', 'Boostrapping']
+        var yValues = [32, 1, 3, 13, 403]
+        var trace = {
+          type: 'bar',
+          x: xlabels,
+          y: yValues,
+          text: yValues.map(String),
+          textfont: { color: ['black', 'white', 'white', 'white', 'white'] },
+          textposition: 'auto',
+          marker: {
+            color: ['rgba(204,204,204,1)', 'rgba(204,204,204,1)', '#337ab7', '#337ab7', 'indianred']
+          },
+        };
+        var data = [trace];
+        var config = { responsive: true, displaylogo: false };
+        var layout = {
+          title: 'CIFAR 32x32 Latency on CPU',
+          font: { size: 12, color: "#FFFFFF" },
+          plot_bgcolor: "#333333",
+          paper_bgcolor: "#333333",
+          yaxis: { color: "white" },
+          yaxis: { color: "white", showline: true, mirror: true, type: 'log', autorange: true },
+          xaxis: { color: "white", showline: true, mirror: true },
+        }
+        Plotly.newPlot('cnn_fhe_complexity', data, layout, config);
+      </script>
+    </span>
+  </div>
+</section>
+
+
+<section data-background="#511EA8" , id="polynomial">
+  <h2 class="r-fit-text">Polynomial Approximation for Non-linear Activations</h2>
+  <center><em>conflict</em> between <span style="color: rgb(255, 140, 0)">multiplicative depth</span> and <span
+      style="color: rgb(0, 255, 136)">approximation precision</span> </center>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color:black">Polynomial Approximation for non-linear activations</h2>
+  <div id="left" style="width:100%;">
+    <img src="../assets/images/talks/base/cryptoface_cvpr/app_relu.png" width="80%">
+  </div>
+  <div id="left" style="width: 50%">
+    <ul style="color: rgb(21, 21, 20)">
+      <li class="fragment" data-fragment-index="0" style="font-size: 70%">High-degree approximation</li>
+    </ul>
+    <ul style="color: green">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="2">Slow: more multiplications, more bootstrappings</li>
+        <li class="fragment" data-fragment-index="3">Accurate: high-degree polynoimals</li>
+        <li class="fragment" data-fragment-index="4">Training/fine-tuning: not necessary</li>
+      </ul>
+    </ul>
+  </div>
+  <div id="right" style="width: 50%">
+    <ul style="color: rgb(21, 21, 20)">
+      <li class="fragment" data-fragment-index="1" style="font-size: 70%">Low-degree approximation</li>
+    </ul>
+    <ul style="color: blue">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="5">Fast: less multiplications, less bootstrappings</li>
+        <li class="fragment" data-fragment-index="6">Not Accurate: low-degree polynoimals</li>
+        <li class="fragment" data-fragment-index="7">Training/fine-tuning: necessary</li>
+      </ul>
+    </ul>
+  </div>
+  <ul style="font-size: 50%">
+    <li>
+      <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/ao" linktarget="_blank"> <u>Wei Ao</u>
+        and <u>Vishnu Boddeti</u>,
+        AutoFHE: Automated Adaption of CNNs for Efficient Evaluation over FHE. USENIX Security 2024.</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="white">
+  <h2 style="color:black">Polynomials for Approximation</h2>
+  <div id="left" style="width:100%" class="fragment" data-fragment-index="1">
+    <ul>
+      <ul style="font-size:100%;color:black">
+        <li>Monomial Polynomials</li>
+      </ul>
+      <center class="fragment" data-fragment-index="2" style="color: black">
+        $1, x, x^2, \cdots, x^d$
+      </center>
+    </ul>
+  </div>
+  <div id="left" style="width:50%" class="fragment" data-fragment-index="3">
+    <ul>
+      <ul style="font-size:100%;color:black">
+        <li>Chebyshev Polynomials</li>
+      </ul>
+    </ul>
+    <div class="r-stack">
+      <img src="../assets/images/talks/base/cryptoface_cvpr/chebyshev.png" width="75%">
+    </div>
+  </div>
+  <div id="right" style="width:50%" class="fragment" data-fragment-index="4">
+    <ul>
+      <ul style="font-size:100%;color:black">
+        <li>Hermite Polynomials</li>
+      </ul>
+    </ul>
+    <div class="r-stack">
+      <img src="../assets/images/talks/base/cryptoface_cvpr/hermite.png" width="70%">
+    </div>
+  </div>
+</section>
+
+<section data-background="white">
+  <h2 style="color:black">Depth for Polynomials</h2>
+  <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="1">
+    <li>Given a polynomial</li>
+  </ul>
+  <center class="fragment" data-fragment-index="2" style="color: black">
+    $f(x)=\sum_{i=0}^d(\alpha_i x^i)$
+  </center>
+  <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="3">
+    <ul></ul>
+    <li>What is the multiplicative depth of the polynomial? </li>
+  </ul>
+  </ul>
+  <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="4">
+    <ul>
+      <li>How many multiplications are required to evalaute the polynomial?</li>
+    </ul>
+  </ul>
+  <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="5">
+    <ul>
+      <li>Is it $d-1$? </li>
+    </ul>
+  </ul>
+  <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="6">
+    <ul>
+      <li>Baby-Step Giant-Step (BSGS) algorithm gives us the minimum number of multiplications $\lceil \log_2(d + 1)
+        \rceil$ </li>
+    </ul>
+  </ul>
+  <ul style="font-size: 50%">
+    <li>
+      <a href="https://link.springer.com/chapter/10.1007/978-3-030-77870-5_21" linktarget="_blank">Jean-Philippe
+        Bossuat, Christian Mouchet, Juan Troncoso-Pastoriza, and Jean-Pierre Hubaux. Efficient bootstrapping for
+        approximate homomorphic encryption with non-sparse keys. In Annual International Conference on the Theory and
+        Applications
+        of Cryptographic Techniques, pages 587–617, 2021.</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color: black">Low-Degree Monomial Approximation</h2>
+  <div id="left" style="width: 100%">
+    <img src="../assets/images/talks/base/cryptoface_cvpr/faster_cryptonet.png" width="70%" />
+  </div>
+  <div id="right" style="width: 100%">
+    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="0">Low-degree polynomial approximation for non-linear activations</li>
+    </ul>
+    <ul style="color: rgb(50, 71, 205)">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="1">Swish: $p = 0.12050344x^2 +0.5x+0153613744$</li>
+        <li class="fragment" data-fragment-index="2">Softplus: $ p = 0082812671x^2 +05x+075248 $</li>
+        <li class="fragment" data-fragment-index="3">ReLU: $p = 0125x^2 +05x+025$ </li>
+      </ul>
+    </ul>
+    <ul style="color: rgb(201, 12, 9)" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="4">Small depth, low precision, training required</li>
+    </ul>
+  </div>
+  <ul style="font-size: 40%">
+    <li>
+      <a href="https://arxiv.org/abs/1811.09953" linktarget="_blank">Edward Chou, Josh Beal, Daniel Levy, Serena Yeung,
+        Albert Haque, Li Fei-Fei. Faster CryptoNets: Leveraging Sparsity for Real-World Encrypted Inference</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color: black">High-Degree Chebyshev Approximation</h2>
+  <div id="left" style="width: 100%">
+    <img src="../assets/images/talks/base/cryptoface_cvpr/minimax.png" width="70%" />
+  </div>
+  <div id="right" style="width: 100%">
+    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="0">High-degree polynomial approximation for ReLU </li>
+    </ul>
+    <ul style="color: rgb(50, 71, 205)">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="1">Composed Polynomials: $p_{\alpha, 1}$ (degree 7), $p_{\alpha, 2}$
+          (degree 7), $p_{\alpha, 3}$ (degree 27)</li>
+        <li class="fragment" data-fragment-index="2">Approximation for $\mathrm{sgn}$: $p_{\alpha}(x)=p_{\alpha,
+          3}(p_{\alpha, 2}(p_{\alpha, 1}(x)))$</li>
+        <li class="fragment" data-fragment-index="3">Approximation for ReLU: $r_{\alpha} = \frac{x+xp_{\alpha}(x)}{2}$
+          (ReLU=$\frac{x+x\mathrm{sgn}(x)}{2}$)</li>
+      </ul>
+    </ul>
+    <ul style="color: rgb(201, 12, 9)" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="4">High depth, high precision, training not required</li>
+    </ul>
+  </div>
+  <ul style="font-size: 40%">
+    <li>
+      <a href="https://arxiv.org/abs/2105.10879" linktarget="_blank">Junghyun Lee, Eunsang Lee, Joon-Woo Lee, Yongjune
+        Kim, Young-Sik Kim, Jong-Seon No. Precise Approximation of Convolutional Neural Networks for Homomorphically
+        Encrypted Data.</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color: black">Hermite Polynomial Neural Network Training</h2>
+  <div id="left" style="width: 100%">
+    <ul style="color: black" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="0">Polynomial neural network training suffers from numerical instability
+      </li>
+    </ul>
+    <ul style="color: rgb(50, 71, 205)">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="1">Backward Propagation: clip gradients</li>
+        <li class="fragment" data-fragment-index="2">Forward Propagation: cannot do clipping under FHE (function
+          $\mathrm{max}$ is not a polynomial)</li>
+      </ul>
+    </ul>
+  </div>
+  <div id="right" style="width: 100%">
+    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="3">AESPA: Basis-Wise Normalization</li>
+    </ul>
+    <ul style="color: rgb(50, 71, 205)">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="4">Normalize polynomial basis separately: $h_0(x)$, $h_1(x)$,
+          $h_2(x)$, $h_3(x)$ </li>
+        <li class="fragment" data-fragment-index="5">Aggregate polynomial basis by trainable weights Approximation for
+          $f(x)=\gamma \sum_{i=0}^d \hat{f_i}\frac{h_i(x)-\mu_i}{\sqrt{\sigma_i^2+\epsilon}} +\beta$</li>
+      </ul>
+    </ul>
+    <img class="fragment" data-fragment-index="3" src="../assets/images/talks/base/cryptoface_cvpr/aespa.png"
+      width="70%" />
+  </div>
+  <ul style="font-size: 40%">
+    <li>
+      <a href="https://arxiv.org/abs/2201.06699" linktarget="_blank">Jaiyoung Park, Michael Jaemin Kim, Wonkyung Jung,
+        Jung Ho Ahn. AESPA: Accuracy Preserving Low-degree Polynomial Activation for Fast Private Inference.</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="#511EA8" , id="packing">
+  <h2>Packing for Convolutional Layers</h2>
+  <center>less <span style="color: red">rotations</span>, much <span style="color: green">faster</span> </center>
+</section>
+
+<section data-background="white">
+  <h2 style="color: black">SISO Packing for convolution</h2>
+  <div id="top" style="width: 100%">
+    <ul style="color: black" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="0">Single-input-single-output packing: pack a 3D tensor channel by
+        channel</li>
+    </ul>
+    <!-- <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">Repeated packing: $x^{(M)} = [x, x, \cdots, x]$ with $M=\lfloor \frac{N}{2d} \rfloor$ copies</li>
+                <li class="fragment" data-fragment-index="2">Multiplexed packing: pack different channels interchangeably</li>
+            </ul>
+        </ul> -->
+    <img class="fragment" data-fragment-index="2" src="../assets/images/talks/base/cryptoface_cvpr/siso.png"
+      width="100%" />
+  </div>
+  <!-- <div id="left" style="width: 30%">
+      <img class="fragment" data-fragment-index="2" src="../assets/images/talks/base/cryptoface_cvpr/siso.png" width="50%" />
+    </div>
+    <div id="right" style="right: 60%">
+      <img class="fragment" data-fragment-index="3" src="../assets/images/talks/base/cryptoface_cvpr/siso2.png" width="30%" />
+    </div> -->
+  <ul style="font-size: 40%">
+    <li>
+      <a href="https://www.usenix.org/conference/usenixsecurity18/presentation/juvekar" linktarget="_blank">Chiraag
+        Juvekar, Vinod Vaikuntanathan, Anantha Chandrakasan. GAZELLE: A Low Latency Framework for Secure Neural Network
+        Inference. USENIX Security 2018.</a>
+    </li>
+  </ul>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color: black">multiplexed packing for convolution</h2>
+  <div id="left" style="width: 100%">
+    <ul style="color: black" style="font-size: 60%">
+      <li class="fragment" data-fragment-index="0">Take advantage of SIMD to reduce the complexity of rotation and
+        multiplication</li>
+    </ul>
+    <ul style="color: rgb(50, 71, 205)">
+      <ul style="font-size: 70%">
+        <li class="fragment" data-fragment-index="1">Repeated packing: $x^{(M)} = [x, x, \cdots, x]$ with $M=\lfloor
+          \frac{N}{2d} \rfloor$ copies</li>
+        <li class="fragment" data-fragment-index="2">Multiplexed packing: pack different channels interchangeably</li>
+      </ul>
+    </ul>
+    <img class="fragment" data-fragment-index="2" src="../assets/images/talks/base/cryptoface_cvpr/mpcnn.png"
+      width="50%" />
+  </div>
+  <ul style="font-size: 40%">
+    <li>
+      <a href="https://proceedings.mlr.press/v162/lee22e.html" linktarget="_blank">Eunsang Lee, Joon-Woo Lee, Junghyun
+        Lee, Young-Sik Kim, Yongjune Kim, Jong-Seon No, Woosuk Choi. Low-Complexity Convolutional Neural Networks on
+        Fully Homomorphic Encryption Using Multiplexed Parallel Convolutions, ICML 2022</a>
+    </li>
+  </ul>
+</section>
+
+
+<!-- <section data-background="white">
+  <h2 style="color:black">Polynomial Approximation of ReLU</h2>
+  <div id="left" style="width:50%;">
+    <span class="fragment">
+      <ul style="color:black;font-size:75%">
+        <li><b>Low-Degree: <i class="far fa-smile-beam fa-lg"></i> Levels $\Downarrow$, <i
+              class="far fa-sad-cry fa-lg"></i> precision $\Downarrow$</b> </li>
+      </ul>
+      <figure><img src="../assets/images/talks/base/autofhe/faster_relu.svg" alt="" width="90%"></figure>
+      <ul>
+        <ul style="font-size:50%;color:black">
+          <li>Faster CryptoNets: Leveraging Sparsity for Real-World Encrypted Inference</li>
+        </ul>
+      </ul>
+    </span>
+  </div>
+  <div id="right" style="width:50%;">
+    <span class="fragment">
+      <ul style="color:black;font-size:75%">
+        <li><b>High-Degree: <i class="far fa-sad-cry fa-lg"></i> Levels $\Uparrow$, <i
+              class="far fa-smile-beam fa-lg"></i> precision $\Uparrow$</b> </li>
+      </ul>
+      <figure><img src="../assets/images/talks/base/autofhe/minimax_relu.png" alt="" width="90%"></figure>
+      <ul>
+        <ul style="font-size:50%;color:black">
+          <li>Precise Approximation of Convolutional Neural Networks for Homomorphically Encrypted Data</li>
+        </ul>
+      </ul>
+    </span>
+  </div>
+</section> -->
+
+
+<section data-background="#511EA8" , id="codesign">
+  <h2>co-designing between CNNs and FHE</h2>
+  <center>Homomorphic neural architectures </center>
+</section>
+
+<section data-background="white">
+  <h2 style="color:black;" class="r-fit-text">Polynomial Approximation of ReLU and Bootstrapping</h2>
+  <div id="left" style="width:50%;">
+    <ul style="color:black;font-size:75%">
+      <li>Homomorphic evaluation architecture of ResNets</li>
+    </ul>
+  </div>
+  <div id="right" style="width:50%;">
+    <ul style="color:black;font-size:75%">
+      <li>Experimental results on CIFAR datasets</li>
+    </ul>
+  </div>
+  <div id="left" style="width:50%;">
+    <figure><img src="../assets/images/talks/base/autofhe/mp_resnet.png" alt="" width="90%"></figure>
+  </div>
+  <div id="right" style="width:50%;">
+    <br>
+    <figure><img src="../assets/images/talks/base/autofhe/mp_result.png" alt="" width="90%"></figure>
+  </div>
+  <div id="left" style="width:100%;"></div>
+  <div id="left" style="width:50%;">
+    <ul style="color:black;font-size:50%">
+      <li>High-degree polynomials $\rightarrow$ Levels $\Uparrow \rightarrow$ Bootstrapping $\Uparrow \rightarrow$
+        Latency $\Uparrow$ <i class="far fa-sad-cry fa-lg"></i></li>
+    </ul>
+  </div>
+  <div id="right" style="width:50%;">
+    <ul style="color:black;font-size:50%">
+      <li>High-degree polynomials $\rightarrow$ Approximation Precision $\Uparrow \rightarrow$ Accuracy $\Uparrow$ <i
+          class="far fa-smile-beam fa-lg"></i></li>
+    </ul>
+  </div>
+  <div id="left" style="width:100%;">
+    <ul style="font-size:50%;color:black">
+      <li>Low-Complexity Convolutional Neural Networks on Fully Homomorphic Encryption Using Multiplexed Parallel
+        Convolutions, ICML 2022</li>
+    </ul>
+  </div>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color:black">Limitations of handcrafted architectures</h2>
+  <br>
+  <div id="left" style="width:50%;">
+    <figure><img src="../assets/images/talks/base/autofhe/mp_resnet.png" alt="" width="90%"></figure>
+  </div>
+  <div id="right" style="width:50%;">
+    <br><br>
+    <div class="box" style="width:100%;background-color:white">
+      <div class="red-box-header" style="font-size:75%;color:black">Manually Designed FHE Evaluation Architecture</div>
+      <div class="box-content">
+        <ul>
+          <ul style="color:black;font-size:75%">
+            <li>Precise approximation of ReLU function.</li>
+            <li>Same ReLU approximation is used for all layers.</li>
+            <li>Every ResBlock has bootstrapping layer.</li>
+            <li>Evaluation architecture specialized for ResNets.</li>
+          </ul>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Co-design CNNs and FHE systems</h2>
+  <div id="left" style="width: 40%">
+    <ul>
+      <ul>
+        <li>Security Requirement</li>
+      </ul>
+    </ul>
+    <br />
+    <div class="fragment" data-fragment-index="0">
+      <div class="box" style="width: 90%">
+        <div class="green-box-header" style="font-size: 75%">
+          Encryption Parameters
+        </div>
+        <div class="box-content">
+          <ul style="font-size: 70%">
+            <li>Cyclotomic polynomial degree: $N$</li>
+            <li>Level: $L$</li>
+            <li>Modulus: $Q_l=\prod_{i=0}^{l} q_l, 0 \leq q_l \leq L$</li>
+            <li>Bootstrapping Depth: $K$</li>
+            <li>Hamming Weight: $h$</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="left" style="width: 20%">
+    <ul>
+      <ul>
+        <li>Latency</li>
+      </ul>
+    </ul>
+    <br /><br /><br />
+    <center class="fragment" data-fragment-index="2">
+      <span style="color: white"><i class="fa fa-arrow-left"></i></span>
+    </center>
+    <center class="fragment" data-fragment-index="2">
+      <span style="color: white"><i class="fa fa-arrow-right"></i></span>
+    </center>
+  </div>
+  <div id="right" style="width: 40%">
+    <ul>
+      <ul>
+        <li>Prediction Accuracy</li>
+      </ul>
+    </ul>
+    <br />
+    <div class="fragment" data-fragment-index="1">
+      <div class="box" style="width: 90%">
+        <div class="red-box-header" style="font-size: 75%">Polynomial CNNs</div>
+        <div class="box-content">
+          <ul style="font-size: 70%">
+            <li>Conv, BN, pooling, FC layers: packing</li>
+            <li>Polynomials: degree -> depth</li>
+            <li>Number of layers: ResNet20, ResNet32</li>
+            <li>Input image resolution</li>
+            <li>Channels/kernels</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="left" style="width: 100%">
+    <br />
+    <ul style="font-size: 50%">
+      <li>
+        <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/ao" linktarget="_blank"><u>Wei Ao</u>
+          and <u>Vishu Boddeti</u>. AutoFHE:
+          Automated Adaption of CNNs for Efficient Evaluation over
+          FHE, USENIX Security 2024</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">space of Homomorphic neural Architectures</h2>
+  <div class="r-stack">
+    <img class="fragment current-visible" src="../assets/images/talks/base/autofhe/autofhe-pareto-front-1.svg"
+      width="80%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/autofhe/autofhe-pareto-front-2.svg"
+      width="80%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/autofhe/autofhe-pareto-front-3.svg"
+      width="80%" />
+    <img class="fragment" src="../assets/images/talks/base/autofhe/autofhe-pareto-front-4.svg" width="80%" />
+  </div>
+  <blockquote class="fragment">
+    How to effectively trade-off between accuracy and latency?
+  </blockquote>
+  <ul style="font-size: 50%">
+    <li>
+      <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/ao" linktarget="_blank"><u>Wei Ao</u> and
+        <u>Vishu Boddeti</u>. AutoFHE:
+        Automated Adaption of CNNs for Efficient Evaluation over FHE,
+        USENIX Security 2024</a>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>Our Key Insight</h2>
+  <br />
+  <center>Approximate the</center>
+  <br />
+  <center>
+    <span style="color: yellow">end-to-end function represented by the network</span>
+  </center>
+  <br />
+  <center>
+    <span style="color: #ff8080">instead of</span> the activation function.
+  </center>
+</section>
+
+<section data-background="white">
+  <h2 style="color: grey">
+    How to <span style="color: blue">optimize</span> end-to-end polynomial
+    neural architecture?
+  </h2>
+  <center class="fragment" style="color: red">
+    Multi-Objective evolutionary optimization
+  </center>
+</section>
+
+<section>
+  <h2 class="r-fit-text">
+    Joint Search for Layerwise EvoReLU and Bootstrapping Operations
+  </h2>
+  <div class="r-stack">
+    <img class="fragment current-visible" data-fragment-index="0"
+      src="../assets/images/talks/base/autofhe/autofhe-layerwise-search-1.svg" width="100%" />
+    <img class="fragment current-visible" data-fragment-index="1"
+      src="../assets/images/talks/base/autofhe/autofhe-layerwise-search-2.svg" width="100%" />
+    <img class="fragment" data-fragment-index="2"
+      src="../assets/images/talks/base/autofhe/autofhe-layerwise-search-3.svg" width="100%" />
+  </div>
+  <br />
+  <div id="left" style="width: 60%">
+    <br />
+    <center>
+      <span class="fragment" data-fragment-index="3">Joint Search Problem</span>
+      <span class="fragment" data-fragment-index="4"><i class="fa fa-arrow-right fa-lg"></i></span>
+      <span class="fragment" data-fragment-index="4">Multiobjective Search</span>
+      <span class="fragment" data-fragment-index="5"><i class="fa fa-arrow-right fa-lg"></i></span>
+    </center>
+  </div>
+  <div id="left" style="width: 40%">
+    <ul class="fragment" data-fragment-index="5" style="color: greenyellow">
+      <ul>
+        <li>Flexible Architecture</li>
+        <li>On demand Bootstrapping</li>
+      </ul>
+    </ul>
+  </div>
+  <div id="left" style="width: 100%">
+    <ul style="font-size: 50%">
+      <li>
+        <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/ao" linktarget="_blank"><u>Wei Ao</u>
+          and <u>Vishu Boddeti</u>. AutoFHE:
+          Automated Adaption of CNNs for Efficient Evaluation over
+          FHE, USENIX Security 2024</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section data-background="#511EA8" id="benchmark">
+  <h2>benchmark Homomorphic architectures on Encrypted CIFAR</h2>
+  <center> image classification task </center>
+</section>
+
+
+<section data-background="white">
+  <h2 style="color: black">Experimental Setup</h2>
+  <div id="left" style="width: 30%">
+    <div class="box" style="width: 90%">
+      <div class="red-box-header" style="font-size: 75%">Dataset: CIFAR10</div>
+      <div class="box-content">
+        <ul style="font-size: 70%">
+          <li>50,000 training images</li>
+          <li>10,000 test images</li>
+          <li>32x32 resolution, 10 classes</li>
+        </ul>
+      </div>
+    </div>
+    <br /><br />
+    <span class="fragment">
+      <div class="box" style="width: 90%">
+        <div class="green-box-header" style="font-size: 75%">
+          Hardware & Software
+        </div>
+        <div class="box-content">
+          <ul style="font-size: 70%">
+            <li>Amazon AWS, r5.24xlarge</li>
+            <li>96 CPUs, 768 GB RAM</li>
+            <li>Microsoft SEAL, 3.6</li>
+          </ul>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div id="right" style="width: 70%">
+    <figure>
+      <img src="../assets/images/talks/base/autofhe/eae54553958e8199239835fbd332f335.png" alt="" width="100%" />
+      <figurecaption><a href="https://www.cs.toronto.edu/~kriz/cifar.html" linktarget="_blank">Alex Krizhevsky. CIFAR
+          example images (online).</a></figurecaption>
+    </figure>
+  </div>
+</section>
+
+<section data-background="white">
+  <h2 class="r-fit-text" style="color: black">
+    Latency and Accuracy Trade-offs under FHE
+  </h2>
+  <br />
+  <div id="left" style="width: 40%">
+    <div class="r-stack">
+      <img src="../assets/images/talks/base/autofhe/results-1.svg" width="100%" />
+      <img class="fragment current-visible" data-fragment-index="1"
+        src="../assets/images/talks/base/autofhe/results-2.svg" width="100%" />
+      <img class="fragment current-visible" data-fragment-index="2"
+        src="../assets/images/talks/base/autofhe/results-3.svg" width="100%" />
+      <img class="fragment" data-fragment-index="3" src="../assets/images/talks/base/autofhe/results-4.svg"
+        width="100%" />
+    </div>
+  </div>
+  <div id="right" style="width: 60%">
+    <table style="font-size: 75%; width: 90%">
+      <thead>
+        <tr style="color: black; text-align: center">
+          <th style="padding: 10px; text-align: center">Approach</th>
+          <th style="padding: 10px; text-align: center">MPCNN</th>
+          <th style="padding: 10px; text-align: center" class="fragment" data-fragment-index="1">
+            AESPA
+          </th>
+          <th style="padding: 10px; text-align: center" class="fragment" data-fragment-index="2">
+            REDsec
+          </th>
+          <th style="padding: 10px; text-align: center" class="fragment" data-fragment-index="3">
+            AutoFHE
+          </th>
+        </tr>
+      </thead>
+      <tbody style="color: black">
+        <tr>
+          <td>Venue</td>
+          <td>ICML22</td>
+          <td class="fragment" data-fragment-index="1">arXiv22</td>
+          <td class="fragment" data-fragment-index="2">NDSS23</td>
+          <td class="fragment" data-fragment-index="3">USENIX24</td>
+        </tr>
+        <tr>
+          <td>Scheme</td>
+          <td>CKKS</td>
+          <td class="fragment" data-fragment-index="1">CKKS</td>
+          <td class="fragment" data-fragment-index="2">
+            <span style="color: red">TFHE</span>
+          </td>
+          <td class="fragment" data-fragment-index="3">CKKS</td>
+        </tr>
+        <tr>
+          <td>Polynomial</td>
+          <td><span style="color: red">high</span></td>
+          <td class="fragment" data-fragment-index="1">
+            <span style="color: red">low</span>
+          </td>
+          <td class="fragment" data-fragment-index="2">n/a</td>
+          <td class="fragment" data-fragment-index="3"><b>mixed</b></td>
+        </tr>
+        <tr>
+          <td>Layerwise</td>
+          <td>No</td>
+          <td class="fragment" data-fragment-index="1">No</td>
+          <td class="fragment" data-fragment-index="2">n/a</td>
+          <td class="fragment" data-fragment-index="3"><b>Yes</b></td>
+        </tr>
+        <tr>
+          <td>Strategy</td>
+          <td>approx</td>
+          <td class="fragment" data-fragment-index="1">train</td>
+          <td class="fragment" data-fragment-index="2">train</td>
+          <td class="fragment" data-fragment-index="3"><b>adapt</b></td>
+        </tr>
+        <tr>
+          <td>Architecture</td>
+          <td>manual</td>
+          <td class="fragment" data-fragment-index="1">manual</td>
+          <td class="fragment" data-fragment-index="2">manual</td>
+          <td class="fragment" data-fragment-index="3"><b>search</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="left" style="width: 100%">
+    <br /><br />
+    <ul style="font-size: 50%; line-height: 100%">
+      <li>
+        <a href="https://proceedings.mlr.press/v162/lee22e.html" linktarget="_blank">MPCNN: Low-Complexity Convolutional
+          Neural Networks on Fully
+          Homomorphic Encryption Using Multiplexed Parallel Convolutions, ICML
+          2022</a>
+      </li>
+      <li class="fragment" data-fragment-index="1">
+        <a href="https://arxiv.org/abs/2201.06699" linktarget="_blank">AESPA: Accuracy Preserving Low-degree Polynomial
+          Activation for Fast
+          Private Inference, arXiv 2022</a>
+      </li>
+      <li class="fragment" data-fragment-index="2">
+        <a href="https://eprint.iacr.org/2021/1100" linktarget="_blank">REDsec: Running Encrypted Discretized Neural
+          Networks in Seconds,
+          NDSS 2023</a>
+      </li>
+      <li class="fragment" data-fragment-index="3">
+        <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/ao" linktarget="_blank">AutoFHE:
+          Automated Adaption of CNNs for Efficient Evaluation over
+          FHE, USENIX Security 2024</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+<section>
+  <h2>Summary and Takeaway</h2>
+  <figure><img src="../assets/images/talks/base/cryptoface_cvpr/fhecnn.png" alt="" width="100%"></figure>
+  <ul>
+    <ul style="font-size:75%">
+      <li> <span style="color: aqua"> Polynomial Approximation </span>: solve the conflict between depth and precision.
+      </li>
+      <li> <span style="color: aqua"> Packing for Convolutional Layers </span>: use SIMD to reduce rotations and
+        multiplications.</li>
+      <li> <span style="color: aqua"> Co-designing CNNs and FHE </span>: find the optimal homomorphic architecture.</li>
+    </ul>
+  </ul>
+</section>
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

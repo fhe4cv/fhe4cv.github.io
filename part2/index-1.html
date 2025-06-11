@@ -1,0 +1,2144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Private Image Retrieval</title>
+  <meta name="author" content="Amina Bassit">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section data-background-iframe="../../../assets/viz/gradient/">
+  <p class="title">Private Image Retrieval</p>
+  <br />
+  <p class="author">Amina Bassit</p>
+  <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+  <p class="subtitle"> CVPR 2025 Tutorial </p>
+  <p class="date">June 12, 2025</p>
+</section>
+
+
+<section>
+  <h2>Retrieval in Computer Vision</h2>
+
+  <div class="box fragment" id="left" style="background-color: white;  width: 40%; transform: scale(0.9);">
+    <div class="red-box-header" style="font-size: 75%;">Device unlocking and payment</div>
+    <div class="box-content">
+      <center>
+        <img style="margin-top: 1em;" src="../assets/images/talks/base/face-id.png" width="90%" />
+        <figcaption>
+          <a style="font-size: 90%;" href="https://support.apple.com/en-us/108411" target="_blank">Apple Face ID</a>
+        </figcaption>
+      </center>
+    </div>
+  </div>
+
+  <div class="box fragment" id="right" style="background-color: white; width: 40%; transform: scale(0.9);">
+    <div class="red-box-header" style="font-size: 75%;">Enhanced visual photo search</div>
+    <div class="box-content">
+      <img style="margin-bottom: 0em;" src="../assets/images/talks/base/photo-search-apple.jpg" width="90%" />
+      <figcaption>
+        <a style="font-size: 90%;" href="https://machinelearning.apple.com/research/homomorphic-encryption"
+          target="_blank">Apple Private NN Search</a>
+      </figcaption>
+    </div>
+  </div>
+  <br><br> <br><br> <br><br> <br><br>
+  <div class="box fragment" id="center" style="background-color: white;  width: 40%; transform: scale(0.9);">
+    <div class="red-box-header" style="font-size: 75%;">Face recognition search engine</div>
+    <div class="box-content">
+      <img style="margin-bottom: 0em;" src="../assets/images/talks/base/text-image-search-lensoai.png" width="90%" />
+      <figcaption>
+        <a style="font-size: 90%;" href="https://lenso.ai/en/page/face-search" target="_blank">lenso.ai AI Face
+          Search</a>
+      </figcaption>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Most of Retrieval tasks are based on <span style="color: orange;">Embeddings</span></h2>
+
+  <div id="center" style="width: 50%; margin-top: 1em; margin-bottom: 2em;">
+    <br>
+    <div id="left" style="width: 100%;">
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/search-similarity.svg"
+        width="75%" />
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">However embeddings leak sensitive information</h2>
+  <div id="left" style="width: 50%; font-size: 75%;">
+    <ul>
+      <li class="fragment" data-fragment-index="0">Embeddings are invertible</li>
+      <li class="fragment" data-fragment-index="1" style="color: #ff8080;">Inversion attacks</li>
+    </ul>
+    <img class="fragment" data-fragment-index="2" style="margin-bottom: 0em;"
+      src="../assets/images/talks/base/highResDiagram.png" width="90%" />
+    <figcaption>
+      <a class="fragment" data-fragment-index="2" style="font-size: 60%;"
+        href="https://proceedings.neurips.cc/paper_files/paper/2023/file/29e4b51d45dc8f534260adc45b587363-Paper-Conference.pdf"
+        target="_blank">Face reconstruction from facial embeddings [SM23]</a>
+    </figcaption>
+    <img class="fragment" data-fragment-index="3" style="margin-bottom: 0em;"
+      src="../assets/images/talks/base/interconnectedAttacks.png" width="90%" />
+    <figcaption>
+      <a class="fragment" data-fragment-index="3" style="font-size: 60%;"
+        href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10239446" target="_blank">Presentation attacks from
+        reconstructed facial embeddings [SM23]</a>
+    </figcaption>
+    <img class="fragment" data-fragment-index="4" style="margin-bottom: 0em;"
+      src="../assets/images/talks/base/inverse-sfm.png" width="90%" />
+    <figcaption>
+      <a class="fragment" data-fragment-index="4" style="font-size: 60%;"
+        href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Pittaluga_Revealing_Scenes_by_Inverting_Structure_From_Motion_Reconstructions_CVPR_2019_paper.pdf"
+        target="_blank">Revealing scenes from motion reconstructions [PJ+19]</a>
+    </figcaption>
+  </div>
+  <div id="right" style="width: 50%; font-size: 75%;">
+    <ul>
+      <li class="fragment">Embeddings reveal sensitive information</li>
+      <li class="fragment" style="color: #ff8080;">Inference attacks</li>
+    </ul>
+    <img class="fragment" style="margin-bottom: 0em;" src="../assets/images/talks/base/inferenceAttack-2.png"
+      width="90%" />
+    <figcaption>
+      <a class="fragment" style="font-size: 60%;" href="https://arxiv.org/pdf/2303.09289" target="_blank">Information
+        inference attack from image embeddings [25]</a>
+    </figcaption>
+  </div>
+</section>
+
+
+<section data-background="#511EA8">
+  <h2>Fully Homomorphic Encryption</h2>
+  Embedding protection for a preserved accuracy
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">FHE Applications in computer vision and beyond</h2>
+  <div id="center" class="box fragment" style="width: 50%;">
+    <div class="red-box-header" style="font-size: 75%;">
+      Private Image-to-Image (Face Recognition)
+    </div>
+    <div class="box-content" style="font-size: 70%; text-align: center;">
+      <img src="../assets/images/talks/base/FR-search.svg" width="50%" />
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 0em; gap: 1em; transform: scale(0.8);">
+    <div class="box fragment" style="width: 50%; background-color: white;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Private Text-to-Text (RAG)
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
+        <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
+      </div>
+    </div>
+    <div class="box fragment" style="width: 50%; background-color: white;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Private Text-to-Image (CLIP)
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
+        <img src="../assets/images/talks/base/CLIP.png" width="90%" />
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <h2 class="r-fit-text">Embedding-based Retrieval Boils Down to <span style="color: orange;">measuring
+      Similarities</span></h2>
+
+  <div id="center" style="width: 50%; margin-top: 1em; margin-bottom: 2em;">
+    <br>
+    <div id="left" class="r-stack" style="width: 100%;">
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/search-similarity.svg"
+        width="75%" />
+      <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/search-similarity-2.svg"
+        width="75%" />
+    </div>
+  </div>
+
+  <div class="fragment" data-fragment-index="1" id="left" style="width: 100%; text-align: center;margin-top: 2em;">
+    Similarity is usually computed as the <span style="color: #ff8080">inner product of embeddings (normalized).</span>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Main FHE Integration Challenge in Private Image Retrieval</h2>
+  <blockquote class="fragment" style="font-size: 85%;">Enhancing the efficiency and scalability of similarity measures
+    under FHE</blockquote>
+
+  <div id="center"
+    style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);">
+    <div class="box fragment" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme selection
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/fhee-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Minimize #Mult and #Rot
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 60%; ">
+        <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+      </div>
+    </div>
+
+    <div class="box fragment" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Avoid bootstrapping
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-0.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+
+<section data-background="#511EA8">
+  <h2>Private Image-to-Image</h2>
+  (Face Recognition: Search)
+</section>
+
+<section>
+  <h2>Face recognition pipeline</h2>
+  <div>
+    <img src="../assets/images/talks/base/FR-overview.svg" width="100%" />
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Embedding attacks in face recognition</h2>
+  <div>
+    <img src="../assets/images/talks/base/FR-issues.svg" width="100%" />
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">FHE Integration Challenges in face search</h2>
+  <div id="left" style="width: 70%; font-size: 70%; margin-left: -3em;">
+    <div id="left" class="r-stack" style="width: 100%;margin-bottom: 3em;">
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/FR-search.svg" width="65%" />
+      <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/FR-search-IP.svg" width="65%" />
+    </div>
+    <!-- <br> -->
+    <div class="fragment" data-fragment-index="1" style="margin-top: 4em;">
+      We need an <span style="color: #ff8080;">efficient and scalable inner product</span> under FHE.
+    </div>
+  </div>
+  <div id="right" style="width: 30%;">
+    <!-- <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);"> -->
+    <div class="box fragment" style="width: 100%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme selection
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/fhee-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" style="width: 100%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Minimize #Mult and #Rot
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 60%; ">
+        <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" style="width: 100%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Avoid bootstrapping
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-0.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text"><a style="color: rgb(255,128,0);">SecureFace:</a> Inner Product with <a
+      style="color: rgb(255,128,0);">one</a> homomorphic multiplication</h2>
+  <div id="left" style="width:50%;">
+    <div>
+      <ul class="fragment" data-fragment-index="0" style="font-size: 60%;"><a
+          href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8698601">Secure face matching using fully
+          homomorphic encryption</a></ul>
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/FR-matching-only.svg" width="50%">
+    </div>
+    <figcaption class="fragment" data-fragment-index="1" style="font-size: 60%;">Single multiplication Inner Product
+    </figcaption>
+    <div class="r-stack">
+      <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/ip-single-mult-1.svg" width="100%">
+      <img class="fragment" data-fragment-index="2" src="../assets/images/talks/base/ip-single-mult-2.svg" width="100%">
+    </div>
+  </div>
+  <div id="right" style="width:50%;">
+    <ul style="font-size: 70%;">
+      <ul>
+        <li class="fragment" data-fragment-index="0">Introduced in FHE-based face matching <a
+            href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8698601">[B18].</a></li>
+        <li class="fragment" data-fragment-index="2">Encrypted inner product $$ct = \left[\!\left[ \mathbf{x}
+          \right]\!\right] \times \left[\!\left[ \mathbf{y} \right]\!\right] = \left[\!\left[ (x_1 y_1, \cdots, x_d y_d)
+          \right]\!\right]$$
+          $$\left[\!\left[ < \mathbf{x},\mathbf{y}>\right]\!\right] = \sum_{i=1}^{\log_2(d)} \text{rot}(ct, 2^i)$$</li>
+        <li class="fragment" data-fragment-index="6">Runs in $31.22$ ms for 128 bits security level.</li>
+      </ul>
+    </ul>
+    <br>
+    <div id="left" class="fragment" style="width: 100%; text-align: left; margin-left: 2em; font-size: 65%;">
+      Reducing <span style="color: cyan;">latency</span> $\implies$ Reducing <span
+        style="color: #ff8080">multiplications and rotations.</span>
+    </div>
+  </div>
+  <br>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+    <div class="box fragment" data-fragment-index="1" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Horizontal-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)-1$</td>
+              <td style="width: 33%;text-align: center;border: none;">$1$</td>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="4" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text"><span style="color: #ff8080">Idea to eliminate multiplications:</span> Pre-computing IP into a
+    Lookup table</h2>
+  <br>
+  <div id="center" class="r-stack" style="width: 100%;">
+    <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/ip-zero-mult-0.svg" width="100%" />
+    <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/ip-zero-mult-1.svg" width="100%" />
+    <img class="fragment" data-fragment-index="2" src="../assets/images/talks/base/ip-zero-mult-2.svg" width="100%" />
+    <img class="fragment" data-fragment-index="3" src="../assets/images/talks/base/ip-zero-mult-3.svg" width="100%" />
+    <img class="fragment" data-fragment-index="4" src="../assets/images/talks/base/ip-zero-mult-4.svg" width="100%" />
+    <img class="fragment" data-fragment-index="5" src="../assets/images/talks/base/ip-zero-mult-final.svg"
+      width="100%" />
+  </div>
+  <br>
+  <blockquote class="fragment" data-fragment-index="6" style="font-size: 90%;"><a
+      href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">MFIP lookup table</a> applies this idea to
+    <span style="color: cyan">reduce latency</span> in face matching.
+  </blockquote>
+  <br>
+  <ul class="fragment" data-fragment-index="6" style="font-size: 40%;"><a
+      href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">[BHV+23] Improved Multiplication-Free
+      Biometric Recognition under Encryption</a></ul>
+</section>
+
+<section>
+  <h2 class="r-fit-text">How to <span style="color: orange;">generate</span> the MFIP Lookup table?</h2>
+  <div class="r-stack" id="center" style="width: 100%; margin-top: 2em;">
+    <img class="fragment" src="../assets/images/talks/base/gen-MFIP-1.svg" width="100%">
+    <img class="fragment" src="../assets/images/talks/base/gen-MFIP-2.svg" width="100%">
+    <img class="fragment" src="../assets/images/talks/base/gen-MFIP-3.svg" width="100%">
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text"><a style="color: rgb(255,128,0);">MFIP:</a> Inner Product with <a
+      style="color: rgb(255,128,0);">zero</a> homomorphic multiplication</h2>
+  <div id="left" style="width:50%;">
+    <div>
+      <ul class="fragment" data-fragment-index="0" style="font-size: 55%;"><a
+          href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">Improved Multiplication-Free Biometric
+          Recognition under Encryption</a></ul>
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/MFIP-use.svg" width="100%">
+    </div>
+  </div>
+  <div id="right" style="width:50%;">
+    <ul style="font-size: 70%;">
+      <ul>
+        <li class="fragment" data-fragment-index="0">2nd generation of practical FHE-based face matching <a
+            href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">[BHV+23].</a></li>
+        <li class="fragment" data-fragment-index="1">Preserves inner product accuracy.</li>
+        <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/mfipv2-perf.png" width="60%">
+      </ul>
+    </ul>
+    <br>
+  </div>
+  <br>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+    <div class="box fragment" data-fragment-index="2" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Horizontal-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)-1$</td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="4" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Effect of Eliminating homomorphic multiplications on Latency</h2>
+  <div id="center" style="width:75%; margin-top: 1em; text-align: center;">
+    <canvas id="runtimeChart"></canvas>
+    <br>
+    <blockquote class="fragment">Removing multiplications decreases latency by half.</blockquote>
+    <br>
+  </div>
+  <div id="left" style="width: 100%; text-align: left; font-size: 45%;margin-top: 2em;">
+    <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8698601">[B18] Secure face matching using fully
+      homomorphic encryption</a>
+    <br>
+    <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">[BHV+23] Improved Multiplication-Free
+      Biometric Recognition under Encryption (MFIP v2)</a>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Is this efficiency gain enough to <a style="color: rgb(255,128,0);">scale up to search?</a>
+  </h2>
+
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+    <div class="box fragment" data-fragment-index="1" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Horizontal-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="2" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        SecureFace Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)-1$</td>
+              <td style="width: 33%;text-align: center;border: none;">$1$</td>
+              <td style="width: 33%;text-align: center;border: none; color: #ff8080;">$\log_2(d)$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        MFIP Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$\log_2(d)-1$</td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+              <td style="width: 33%;text-align: center;border: none; color: #ff8080;">$\log_2(d)$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="fragment" id="left" style="width: 100%; text-align: left;">
+    Two things to consider for search
+    <ol>
+      <li class="fragment">Scalability of the horizontal packing</li>
+      <li class="fragment">Complexity depends on $d$.</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  const ctx = document.getElementById('runtimeChart').getContext('2d');
+
+  const labels = [
+    "Cleartext decision",
+    // "Encrypted decision",
+  ];
+
+  //   const mfipv1 = [25.74, 111.26];
+  //   const mfipv2 = [16.95, 27.56];
+  //   const secureFace = [31.22, 497.99];
+  const mfipv2 = [16.95];
+  const secureFace = [31.22];
+
+  const barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'SecureFace',
+          data: secureFace,
+          backgroundColor: '#ffcc00',
+        },
+        // {
+        //   label: 'MFIP v1',
+        //   data: mfipv1,
+        //   backgroundColor: '#C8A2C8'
+        // },
+        {
+          label: 'MFIP v2',
+          data: mfipv2,
+          backgroundColor: '#1f77b4'
+        },
+
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          bodyColor: 'lightgray',
+          titleColor: 'lightgray',
+          footerColor: 'lightgray',
+          backgroundColor: 'lightgray'
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: 'lightgray'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Latency comparison of FHE-based face matching',
+          color: 'lightgray',
+          padding: {
+            bottom: 30
+          }
+        },
+        datalabels: {
+          display: true,
+          anchor: 'end',
+          align: 'end',
+          color: 'lightgray',
+          font: {
+            weight: 'bold'
+          },
+          formatter: function (value) {
+            return value.toFixed(2);
+          }
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: 'lightgray'
+          },
+          grid: {
+            color: '#EFF0EF',
+            display: false,
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Milliseconds (ms)',
+            color: 'lightgray'
+          },
+          ticks: {
+            color: 'lightgray'
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.3)',
+            display: true,
+          },
+          beginAtZero: true
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+</script>
+</section>
+
+
+
+
+
+<section>
+  <h2 class="r-fit-text">Packing Approaches for face Search</h2>
+  <br>
+  <ul id="center" style="font-size: 80%;">Analysis of the special case of #References = Ciphertext capacity</ul>
+  <div id="center" style="width:80%;">
+    <img src="../assets/images/talks/base/packingApproaches.svg" width="80%">
+  </div>
+</section>
+
+
+
+<section>
+  <h2 class="r-fit-text">Face Search using <a style="color: rgb(255,128,0);">advanced Horizontal packing</a></h2>
+  <div id="left" style="width:50%;">
+    <div>
+      <ul class="fragment" data-fragment-index="0" style="font-size: 55%;"><a
+          href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">[BOK+22] Improved Homomorphically
+          Encrypted Biometric Identification Using Coefficient Packing</a></ul>
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/bokSearch.png" width="98%">
+    </div>
+  </div>
+  <div id="right" style="width:50%;">
+    <ul style="font-size: 70%;">
+      <ul>
+        <li class="fragment" data-fragment-index="0">Runs $1:1000$ in $218.18s$</li>
+        <li class="fragment" data-fragment-index="0">Homomorphic multiplications are <span
+            style="color: #ff8080">sequentially</span> computed.</li>
+      </ul>
+    </ul>
+    <br>
+  </div>
+  <br>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+    <div class="box fragment" data-fragment-index="2" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Horizontal-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$d \cdot \left\lceil \frac{d \cdot m}{c}
+                \right\rceil$</td>
+              <td style="width: 33%;text-align: center;border: none;">$\left\lceil \frac{d \cdot m}{c} \right\rceil$
+              </td>
+              <td style="width: 33%;text-align: center;border: none;">$(d-1) \cdot \left\lceil \frac{d \cdot m}{c}
+                \right\rceil$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="box fragment" data-fragment-index="4" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-0.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <h2 class="r-fit-text">HERS: Face Search using <a style="color: rgb(255,128,0);">Vertical packing</a></h2>
+  <div id="left" style="width: 50%; font-size: 60%;">
+    <div id="left" style="width: 100%;">
+      <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9678986">[EJB22] HERS: Homomorphically Encrypted
+        Representation Search</a>
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/HERS-method.svg" width="65%" />
+    </div>
+    <br>
+    <div class="fragment" data-fragment-index="2" style="font-size: 85%; ">
+      Homomorphic multiplications are computed in <span style="color: cyan">parallel.</span>
+    </div>
+  </div>
+  <div id="right" style="width: 45%;">
+    <div class="box fragment" data-fragment-index="1" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Vertical-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" data-fragment-index="3" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$(d-1) \cdot \left\lceil \frac{m}{c} \right\rceil$
+              </td>
+              <td style="width: 33%;text-align: center;border: none;">$d \cdot \left\lceil \frac{m}{c} \right\rceil$
+              </td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" data-fragment-index="2" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">MFIP Search: Face Search with <a style="color: rgb(255,128,0);">zero</a> homomorphic
+    multiplication</h2>
+  <div id="center" style="width: 100%; font-size: 60%;">
+    <div id="left" style="width: 60%;">
+      <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/MFIP-search-method.svg"
+        width="100%" />
+    </div>
+    <a style="font-size: 75%;" class="fragment" data-fragment-index="0"
+      href="https://ieeexplore.ieee.org/abstract/document/10902488">[BHV+25] Practical Biometric Search under
+      Encryption: Meeting the NIST Runtime Requirement without Loss of Accuracy</a>
+    <br>
+    <div class="fragment" data-fragment-index="2" style="font-size: 90%; ">
+      Only homomorphic <span style="color: cyan">additions</span> are used.
+    </div>
+  </div>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(1); margin-bottom: -1em;">
+
+    <div class="box fragment" data-fragment-index="1" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Vertical-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" data-fragment-index="3" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;">$(d-1) \cdot \left\lceil \frac{m}{c} \right\rceil$
+              </td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="box fragment" data-fragment-index="2" style="width: 80%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Can search efficiency be further improved?</h2>
+
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+    <div class="box fragment" data-fragment-index="1" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Vertical-packing.svg" width="80%">
+        </center>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="2" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Bootstrapping: not needed
+      </div>
+      <div class="box-content" style="display: flex; align-items: center; justify-content: center; height: 80%;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-not.svg" width="95%">
+        </center>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div id="center"
+    style="width: 100%;display: flex; justify-content: space-between; gap: 1em; transform: scale(0.9); margin-bottom: -1em;">
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        HERS Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;"><span style="color: #ff8080;">$(d-1) \cdot
+                  \left\lceil \frac{m}{c} \right\rceil$</span></td>
+              <td style="width: 33%;text-align: center;border: none;"><span style="color: #ff8080;">$d \cdot \left\lceil
+                  \frac{m}{c} \right\rceil$</span></td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="box fragment" data-fragment-index="3" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        MFIP Search Complexity
+      </div>
+      <div class="box-content">
+        <div style="width: 100%;">
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" style="width: 95%; height: auto;" />
+        </div>
+        <div id="center" style="width: 100%; margin-top: -1em;">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr>
+              <td style="width: 33%;text-align: center;border: none;"><span style="color: #ff8080;">$(d-1) \cdot
+                  \left\lceil \frac{m}{c} \right\rceil$</span></td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+              <td style="width: 33%;text-align: center;border: none;">$0$</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="fragment" id="center" style="width: 50%; text-align: center;">
+    <blockquote>Their complexity still depends on <span style="color: #ff8080;">$d$.</span></blockquote>
+  </div>
+</section>
+
+
+
+<section>
+  <h2 class="r-fit-text"><span style="color: orange;">Dimensionality reduction</span> can further <span
+      style="color: orange;">reduce latency</span></h2>
+  <img src="../assets/images/talks/base/hers-schematic.svg" width="90%">
+  <br>
+  <span class="fragment" style="font-size: 75%;">Dimensionality reduction <span style="color: orange">reduces $d$
+      $\implies$ less homomorphic operations</span></span>
+  <img class="fragment" src="../assets/images/talks/base/vector-op-perf-2.svg" width="70%"> </img>
+  <ul style="font-size:50%">
+    <li><a
+        href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Gong_On_the_Intrinsic_Dimensionality_of_Image_Representations_CVPR_2019_paper.pdf">[GBJ19]
+        On the Intrinsic Dimensionality of Image Representations</a></li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="r-fit-text" style="transform: scale(1);">Effect of the dimensionality reduction on <span
+      style="color: orange;">search Accuracy (Rank-1)</span></h2>
+
+  <div style="display: flex; width: 100%;">
+    <div id='megaFacePlot' style="width: 50%;"></div>
+    <div id='fingerPlot' style="width: 50%;"></div>
+  </div>
+  <br>
+  <div id="left" style="width: 100%;">
+    <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9678986">[EJB22] HERS: Homomorphically Encrypted
+      Representation Search</a>
+  </div>
+
+  <script>
+    var xlabels1 = ['64-dim', '128-dim', '256-dim', '512-dim'];
+    var trace1 = {
+      type: 'bar',
+      x: xlabels1,
+      y: [67.9, 79.0, 81.4, 81.4],
+      name: 'MegaFace (1 Million Gallery)',
+      marker: { color: '#A2C8A2' },
+      text: [67.9, 79.0, 81.4, 81.4],
+      textposition: 'auto'
+    };
+
+    var layout = {
+      font: { size: 12, color: "#FFFFFF" },
+      plot_bgcolor: "#333333",
+      paper_bgcolor: "#333333",
+      yaxis: {
+        type: 'log',
+        autorange: true,
+        showline: true,
+        color: 'white',
+        mirror: true,
+        title: 'Accuracy (%)',
+        gridcolor: 'rgba(255, 255, 255, 0.3)',
+      },
+      xaxis: {
+        showline: true,
+        color: 'white',
+        mirror: true
+      },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        x: 0.5,
+        y: -0.2,
+        xanchor: 'center',
+        yanchor: 'top'
+      }
+    };
+
+    var config = { responsive: true, displaylogo: false };
+    Plotly.newPlot('megaFacePlot', [trace1], layout, config);
+
+    var xlabels2 = ['16-dim', '32-dim', '64-dim', '192-dim'];
+    var trace2 = {
+      type: 'bar',
+      x: xlabels2,
+      y: [78.6, 92.2, 92.3, 92.3],
+      name: 'Fingerprint (100 Million Gallery)',
+      marker: { color: '#C8A2C8' },
+      text: [78.6, 92.2, 92.3, 92.3],
+      textposition: 'auto'
+    };
+
+    Plotly.newPlot('fingerPlot', [trace2], layout, config);
+  </script>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text" style="transform: scale(1);">Effect of the dimensionality reduction on <span
+      style="color: orange;">search CPU runtime</span></h2>
+  <center>
+    <div id='myDiv1' style="transform: scale(0.8);margin-top: -1em;margin-bottom: -1em;"></div>
+  </center>
+  <script>
+    var xlabels = ["16", "32", "64", "128", "192", "256", "512"];
+    var trace1 = {
+      type: 'bar',
+      x: xlabels,
+      y: [1.29, 2.39, 4.65, 9.35, 14.55, 19.46, 38.37],
+      name: 'HERS <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9678986">[EJB22]</a>',
+      marker: {
+        color: '#A2C8A2',
+      },
+      text: [1.29, 2.39, 4.65, 9.35, 14.55, 19.46, 38.37],
+      textposition: 'auto'
+    };
+    var trace2 = {
+      type: 'bar',
+      x: xlabels,
+      y: [0.07, 0.17, 0.49, 0.62, 0.88, 1.22139, 1.28],
+      name: 'MFIP-based search <a href="https://ieeexplore.ieee.org/abstract/document/10902488">[BHV+25]</a>',
+      marker: {
+        color: '#C8A2C8'
+      },
+      text: [0.07, 0.17, 0.49, 0.62, 0.88, 1.22, 1.28],
+      textposition: 'auto'
+    };
+
+    var data = [trace1, trace2];
+
+    var config = { responsive: true, displaylogo: false };
+
+    var layout = {
+      title: '<span style="color:orange;">(1:1M) Search CPU runtime</span> measured on the same machine<br>over 12 parallel cores for 128 bits security',
+      font: { size: 16, color: "#FFFFFF" },
+      plot_bgcolor: "#333333",
+      paper_bgcolor: "#333333",
+      yaxis: {
+        type: 'log',
+        autorange: true,
+        showline: true,
+        color: 'white',
+        mirror: true,
+        title: 'Seconds (s)',
+        tickvals: [0.1, 0.5, 1, 5, 10, 20, 40],
+        gridcolor: 'rgba(255, 255, 255, 0.3)',
+      },
+      xaxis: {
+        type: 'category',
+        showline: true,
+        color: 'white',
+        mirror: true,
+        tickvals: xlabels,
+        ticktext: xlabels,
+        tickmode: 'array',
+        title: 'Dimension',
+      },
+      showlegend: true,
+      legend: {
+        orientation: 'h',
+        xanchor: 'right',
+        yanchor: 'bottom',
+        x: 1.00,
+        y: -0.6,
+      },
+      barmode: 'group'
+    };
+
+    Plotly.newPlot('myDiv1', data, layout, config);
+
+  </script>
+
+  <!-- <span style="font-size: 75%; " ><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">[BOK+22]</a> records <span style="color: #d30b0b">$60.60h$ ($512$-dim),</span> <span style="color: #FB4166">$3.94h$ ($128$-dim),</span> <span style="color: #F08080">$1h$ ($64$-dim).</span></span>
+    <blockquote style="font-size: 75%;">Dimensionality reduction reduces the latency of both MFIP-based and HERS search</blockquote> -->
+
+  <div id="left" style="width: 100%; text-align: left; font-size: 45%;margin-top: 1em;">
+    <!-- <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">[BOK+22] Improved Homomorphically Encrypted Biometric Identification Using Coefficient Packing</a>  
+        <br> -->
+    <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9678986">[EJB22] HERS: Homomorphically Encrypted
+      Representation Search</a>
+    <br>
+    <a href="https://ieeexplore.ieee.org/abstract/document/10902488">[BHV+25] Practical Biometric Search under
+      Encryption: Meeting the NIST Runtime Requirement without Loss of Accuracy</a>
+  </div>
+</section>
+
+<section data-transition="slide" data-background="#b5533c">
+  <h2>Today FHE runs on GPUs</h2>
+  Bringing practical speed to secure computation
+</section>
+
+<section>
+  <h2 class="r-fit-text">MFIP Search Speed at scale using a <span style="color: orange;">single GPU (A100)</span></h2>
+  <blockquote style="font-size: 75%;">FHE-based search takes $5min$ for a 1 Billion vector gallery with up to 512-dim
+  </blockquote>
+  <div style="display: flex; width: 100%;transform: scale(1);">
+    <div id='32DimScalePlot' style="width: 33%;"></div>
+    <div id='128DimScalePlot' style="width: 33%;"></div>
+    <div id='512DimScalePlot' style="width: 33%;"></div>
+  </div>
+  <br>
+  <div id="left" style="width: 100%;">
+    <a href="https://github.com/encryptorion-lab/phantom-fhe"><i class="fa-brands fa-github"></i> PhantomFHE: A
+      CUDA-Accelerated Homomorphic Encryption Library</a>
+  </div>
+
+  <script>
+    var xlabels = ['1M', '10M', '100M', '1B', '10B', '100B', '1T'];
+    var trace1 = {
+      type: 'bar',
+      x: xlabels,
+      y: [0.187, 1.846, 18.446, 184.450, 1844.483, 18444.825, 184448.244],
+      name: '32-dim',
+      marker: { color: '#A2C8A2' },
+      text: [0.187, 1.846, 18.446, 184.450, 1844.483, 18444.825, 184448.244],
+      textposition: 'auto'
+    };
+
+    var layout = {
+      font: { size: 12, color: "#FFFFFF" },
+      plot_bgcolor: "#333333",
+      paper_bgcolor: "#333333",
+      yaxis: {
+        type: 'log',
+        autorange: true,
+        showline: true,
+        color: 'white',
+        mirror: true,
+        title: 'Runtime (seconds)',
+        gridcolor: 'rgba(255, 255, 255, 0.3)',
+      },
+      xaxis: {
+        showline: true,
+        color: 'white',
+        mirror: true
+      },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        x: 0.5,
+        y: -0.2,
+        xanchor: 'center',
+        yanchor: 'top'
+      }
+    };
+
+    var config = { responsive: true, displaylogo: false };
+    Plotly.newPlot('32DimScalePlot', [trace1], layout, config);
+
+    var trace2 = {
+      type: 'bar',
+      x: xlabels,
+      y: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
+      name: '128-dim',
+      marker: { color: '#C8A2C8' },
+      text: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
+      textposition: 'auto'
+    };
+
+    Plotly.newPlot('128DimScalePlot', [trace2], layout, config);
+
+    var trace3 = {
+      type: 'bar',
+      x: xlabels,
+      y: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+      name: '512-dim',
+      marker: { color: '#C8C8A2' },
+      text: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+      textposition: 'auto'
+    };
+
+    Plotly.newPlot('512DimScalePlot', [trace3], layout, config);
+  </script>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Summary of FHE-based face recognition Search solutions</h2>
+
+  <lu style="font-size: 75%;">Computational complexity $\mathcal{O}\left( K \cdot \left( \#\mathrm{M}_{\mathrm{HE}} +
+    \#\mathrm{R}_{\mathrm{HE}} + \#\mathrm{A}_{\mathrm{HE}} \right) \right)$</lu>
+
+  <div id="center" style="transform: scale(0.9);">
+    <table border="1" style="justify-content: center; font-size: 60%;">
+      <thead>
+        <tr style="background-color: black;">
+          <th>Solutions</th>
+          <th>Application</th>
+          <th>$K$</th>
+          <th>$\#M_{HE}$</th>
+          <th>$\#R_{HE}$</th>
+          <th>$\#A_{HE}$</th>
+          <th>Storage</th>
+          <th>Protected Reference</th>
+          <th>Protected Probe</th>
+          <th>Runtime<br>(1:1Million)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8698601">SecureFace (linear)</a></td>
+          <td>Biometric matching</td>
+          <td>$m$</td>
+          <td>1</td>
+          <td>\(\log_2 \left( \frac{\text{RingDim}}{2} \right)\)</td>
+          <td>\(\log_2 \left( \frac{\text{RingDim}}{2} \right)\)</td>
+          <td>\(d \cdot m\)</td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              8.67h</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10347446">MFIPv2 (linear)</a></td>
+          <td>Biometric matching</td>
+          <td>\(m\)</td>
+          <td>0</td>
+          <td>\(\log_2 \left( \frac{\text{RingDim}}{2} \right)\)</td>
+          <td>\(\log_2 \left( \frac{\text{RingDim}}{2} \right)\)</td>
+          <td>\(\left( \sum_{i=1}^{d} N_i \right) \cdot m\)</td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Permuted &amp; Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Permuted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              4.7h</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">BOK'+22</a></td>
+          <td>Biometric search</td>
+          <td>\(\left\lceil \frac{d \cdot m}{c} \right\rceil\)</td>
+          <td>1</td>
+          <td>\(d - 1\)</td>
+          <td>\(d\)</td>
+          <td>\(\left\lceil \frac{d \cdot m}{c} \right\rceil\)</td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              12.86h</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9678986"> HERS</a></td>
+          <td>Biometric search and RAG</td>
+          <td>\(\left\lceil \frac{m}{c} \right\rceil\)</td>
+          <td>\(d\)</td>
+          <td>0</td>
+          <td>\(d - 1\)</td>
+          <td>\(d \cdot \left\lceil \frac{m}{c} \right\rceil\)</td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              38.37s</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://ieeexplore.ieee.org/abstract/document/10902488">BHV+'25</a></td>
+          <td>Biometric search and CLIP</td>
+          <td>\(\left\lceil \frac{m}{c} \right\rceil\)</td>
+          <td>0</td>
+          <td>0</td>
+          <td>\(d - 1\)</td>
+          <td>\(\left( \sum_{i=1}^{d} N_i \right) \cdot \left\lceil \frac{m}{c} \right\rceil\)</td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Permuted &amp; Encrypted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: #FF5F5F; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              Permuted</div>
+          </td>
+          <td style="text-align: center; position: relative;">
+            <div
+              style="background-color: yellowgreen; color: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center;">
+              1.28s</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="left" style="width: 100%; text-align: left; font-size: 45%;margin-top: 2em;">
+    <i class="fa-brands fa-github"></i> <a href="https://github.com/human-analysis/secure-face-matching">SecureFace:
+      https://github.com/human-analysis/secure-face-matching</a>
+    <br>
+    <i class="fa-brands fa-github"></i> <a href="https://github.com/aminabassit/improvedMFBR">MFIP v2:
+      https://github.com/aminabassit/improvedMFBR</a>
+    <br>
+    <i class="fa-brands fa-github"></i> <a href="https://github.com/human-analysis/hers-encrypted-image-search">HERS:
+      https://github.com/human-analysis/hers-encrypted-image-search</a>
+  </div>
+</section>
+
+
+
+
+<section data-background="#511EA8">
+  <h2>Private Text-to-Text</h2>
+  (Text Embedding-based Retrieval in RAG)
+</section>
+
+<section>
+  <h2 class="r-fit-text">Think text embeddings are private? <span style="color: orange;">Research shows otherwise</span></h2>
+
+  <div style="font-size: 85%; margin-top: 2em;">Storing embeddings instead of raw text <span style="color: #ff8080;">can still leak confidential data.</span></div>
+
+     <div style="margin-top: 2em; ">
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/4ZQLM2Pg0dE?start=210&end=350&autoplay=0&rel=0"
+      frameborder="0"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+     </div>
+
+</section>
+
+<section>
+  <h2 class="r-fit-text">RAG boosts customized LLMs using external vector DBs BUT insecurely</h2>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 1.5em;">
+
+    <div class="box" id="left" style="background-color: white;  width: 60%;">
+      <div class="red-box-header">Vulnerabilities healthcare-based RAG</div>
+      <div class="box-content">
+        <center>
+          <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="95%" />
+        </center>
+      </div>
+    </div>
+    <div id="right" style="width: 40%; font-size: 90%; text-align: left;">
+      <ul>
+        <li>RAG lacks <span style="color: #ff8080;">access control</span> and is vulnerable to <span
+            style="color: cyan;">embedding inversion</span> and <span style="color: #ff8080;">prompt injection data
+            extraction attacks</span>, exposing sensitive information from documents with restricted access.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Private text embedding retrieval in RAG</h2>
+  <div class="box" id="left" style="background-color: white;  width: 70%; transform: scale(0.9);">
+    <div class="red-box-header">SecureRAG: End-to-end secure retrieval-augmented generation</div>
+    <div class="box-content">
+      <center>
+        <img src="../assets/images/talks/base/SecureRAG-v4.svg" width="95%" />
+      </center>
+    </div>
+  </div>
+  <br><br><br>
+  <span id="center" style="width: 100%; font-size: 75%;">
+    FHE prevents text <span style="color: cyan;">embedding inversion attacks</span> BUT lacks <span
+      style="color: orange">access control.</span>
+    <br>
+    <span>$\Downarrow$</span>
+    <br>
+    <span>FHE is paired with <span style="color: orange;">attribute-based encryption (ABE)</span> to secure RAG
+      end-to-end.</span>
+  </span>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Performance of Private text embedding retrieval in SecureRAG</h2>
+  <br>
+  <div id="left" style="width: 40%;">
+    <img src="../assets/images/talks/base/plot-rank-acc-k-20-CovidQA-all.png" width="100%" />
+    <span style="font-size: 80%;">SecureRAG <span style="color: #ff8080;">preserves accuracy.</span></span>
+  </div>
+
+
+  <div id="right" style="width: 55%; margin: auto;">
+    <canvas id="fheChart"></canvas>
+    <span style="font-size: 75%;">SecureRAG is <span style="color: #ff8080;">$13.6\times$</span> faster than <a
+        href="https://arxiv.org/abs/2412.12775">RemoteRAG</a>, which takes <span style="color: #ff8080;">$0.68$s on two
+        GPUs</span> to retrieve $5$ documents out of $160$.</span>
+  </div>
+  <script>
+    const ctx2 = document.getElementById('fheChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['100 : 16K', '100 : 32K'],
+        datasets: [
+          {
+            label: '256',
+            color: "lightgray",
+            data: [18, 30],
+            backgroundColor: '#1f77b4'
+          },
+          {
+            label: '512',
+            data: [27, 43],
+            backgroundColor: '#ff7f0e'
+          },
+          {
+            label: '768',
+            data: [37, 58],
+            backgroundColor: '#7f7f7f'
+          },
+          {
+            label: '1024',
+            data: [47, 71],
+            backgroundColor: '#ffcc00'
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Document Search single GPU runtime (ms) of\n top-100 FHE-encrypted text embeddings',
+            color: 'white',
+            font: {
+              size: 14,
+            },
+            padding: {
+              top: 10,
+              bottom: 30
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              color: 'lightgray'
+            }
+          },
+          tooltip: {
+            enabled: true
+          }
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: false,
+            title: {
+              display: false,
+              color: 'lightgray'
+            },
+            ticks: {
+              color: 'lightgray'
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Runtime (ms)',
+              color: 'lightgray'
+            },
+            ticks: {
+              color: 'lightgray'
+            },
+          }
+        }
+      }
+    });
+  </script>
+</section>
+
+
+
+<section data-background="#511EA8">
+  <h2>Private Text-to-Image</h2>
+  (CLIP Embedding-based Retrieval)
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">CLIP uses inner product to compare text and image embeddings</h2>
+  <div id="left" style="width: 100%; font-size: 60%; margin-top: 1em;">
+    <img src="../assets/images/talks/base/CLIP.png" width="70%" />
+  </div>
+  <div id="left" style="width: 100%; font-size: 80%; margin-top: 1em;">
+    Can MFIP lookup table be used over CLIP embeddings?
+    <br>
+    <span class="fragment" style="color: cyan; font-size: 90%;">No, MFIP assumes uniformity over the unit
+      $d$-Ball.</span>
+    <br>
+    <img class="fragment" src="../assets/images/talks/base/d-ball-uniformity.svg" width="30%" />
+  </div>
+  <div id="left" style="width: 100%; font-size: 50%; margin-top: 1em;">
+    <span><a href="https://openreview.net/pdf?id=EDuKP7DqCk">[RK+21] Learning Transferable Visual Models From Natural
+        Language Supervision.</a></span>
+  </div>
+</section>
+
+
+
+
+<section>
+  <h2 class="r-fit-text">
+    Text and image CLIP features empirically follow <span style="color: orange;">$\mathcal{N}(0,1)$</span> </h2>
+
+  <div class="plot-row" style="transform: scale(0.9); display: flex;">
+    <div class="plot-box" style="width: 50%;">
+      <div id="plot-image"></div>
+      <div class="caption" style="font-size: 75%;">Feature from <span style="color: aqua;">image</span> CLIP embedding
+      </div>
+    </div>
+    <div class="plot-box" style="width: 50%;">
+      <div id="plot-text"></div>
+      <div class="caption" style="font-size: 75%;">Feature from <span style="color: aqua;">text</span> CLIP embedding
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+<script>
+  function plotFromJSON(jsonPath, targetId) {
+    fetch(jsonPath)
+      .then(response => response.json())
+      .then(data => {
+        const length = data.pdf_n01.length;
+        const x_range = Array.from({ length }, (_, i) => -5 + i * 10 / length);
+
+        Plotly.newPlot(targetId, [
+          {
+            x: x_range,
+            y: data.pdf_est_kde,
+            type: 'bar',
+            name: 'Empirical',
+            width: 0.8 * (x_range[1] - x_range[0]),
+            marker: { color: '#1f77b4' }
+          },
+          {
+            x: x_range,
+            y: data.pdf_n01,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'N(0,1)',
+            line: { color: 'orange', width: 2 }
+          },
+          {
+            x: x_range,
+            y: data.pdf_est_kde,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'KDE',
+            line: { color: 'lime', width: 2 }
+          }
+        ], {
+          margin: { t: 20 },
+          plot_bgcolor: '#333333',
+          paper_bgcolor: '#333333',
+          font: { color: 'white' },
+          xaxis: {
+            title: 'Feature values',
+            gridcolor: '#444'
+          },
+          yaxis: {
+            title: 'Probability density',
+            gridcolor: '#444'
+          },
+          legend: { x: 1, y: 1 }
+        }, { responsive: true });
+      })
+      .catch(error => console.error(`Failed to load ${jsonPath}:`, error));
+  }
+
+  // Load and render both plots
+  plotFromJSON('../assets/dataPlots/test_img 512-D_feat_455_empirical_histogram.json', 'plot-image');
+  plotFromJSON('../assets/dataPlots/test_txt 512-D_feat_455_empirical_histogram.json', 'plot-text');
+</script>
+
+
+<section>
+  <h2 class="r-fit-text">ScoreUP lookup table supporting CLIP-like embeddings</h2>
+  <div id="center" style="width: 100%; font-size: 80%; margin-top: 1em;">
+    <img src="../assets/images/talks/base/MFIP-use.svg" width="65%">
+    <br>
+    <span style="color:orange">ScoreUP lookup table</span> approximate CLIP features' PDF by <span
+      style="color:orange">$\mathcal{N}(0,1)$.</span></span>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Performance of ScoreUP lookup table for pre-computing IP</h2>
+  <div id="pearson-plot"></div>
+  <div id="left">
+    <blockquote class="fragment" style="font-size: 80%;">ScoreUP achieves performance similar to that of IP as the
+      feature quantization level $(2^{\text{bits}})$ increases.</blockquote>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const trace = {
+      x: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+      y: [0.925, 0.968, 0.987, 0.994, 0.996, 0.997, 0.998, 0.9985, 0.999],
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { color: '#8be9fd', width: 3 },
+      marker: { color: '#50fa7b', size: 8 }
+    };
+
+    const layout = {
+      title: {
+        text: 'Pearson Correlation for IP Tab (512-D)',
+        font: { color: 'white', size: 20 }
+      },
+      xaxis: {
+        title: { text: 'Bits', font: { color: 'white' } },
+        tickfont: { color: 'white' },
+        gridcolor: '#444'
+      },
+      yaxis: {
+        title: { text: 'Pearson', font: { color: 'white' } },
+        tickfont: { color: 'white' },
+        gridcolor: '#444'
+      },
+      plot_bgcolor: '#333333',
+      paper_bgcolor: '#333333',
+    };
+
+    Plotly.newPlot('pearson-plot', [trace], layout, { responsive: true });
+  });
+</script>
+
+<!-- <section>
+    <h2 class="r-fit-text">Private text-to-image retrieval using ScoreUP</h2>
+    <div class="box" id="center" style="background-color: white;  width: 80%; transform: scale(0.9);">
+      <div class="box-content">
+        <center>
+        <img src="../assets/images/talks/base/scoreUP-protocol.svg" width="95%" />
+        </center>
+      </div>
+    </div>
+</section> -->
+
+
+
+<section>
+
+  <h2>Takeaways</h2>
+
+  <br>
+  <div style="width: 100%; ">
+    <span id="left" class="fragment" style="text-align: left; font-size: 75%;">FHE is no longer just 🔒 secure <span
+        style="color: #ff8080;">BUT SLOW 🐌 ...</span></span>
+    <br>
+    <span id="center" class="fragment">FHE is fast ⚡⚡⚡ and meets scale</span>
+    <br>
+    <span id="right" class="fragment">🔍 <span style="color: cyan;">1B</span> private records in <span
+        style="color: cyan;">$5min$</span> on <span style="color: cyan;">1 GPU</span></span>
+  </div>
+  <br>
+  <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);">
+    <div class="box" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Private Image-to-Image (FR)
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center;">
+        <img src="../assets/images/talks/base/FR-search.svg" width="60%" />
+      </div>
+    </div>
+    <div class="box" style="width: 50%; background-color: white;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Private Text-to-Text (RAG)
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
+        <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
+      </div>
+    </div>
+    <div class="box" style="width: 50%; background-color: white;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Private Text-to-Image (CLIP)
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
+        <img src="../assets/images/talks/base/CLIP.png" width="90%" />
+      </div>
+    </div>
+  </div>
+</section>
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CryptoFace: from Pytorch Training to SEAL Inference</title>
+  <meta name="author" content="Wei Ao">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section data-background-iframe="../assets/viz/gradient/">
+    <p class="title">CryptoFace: from Pytorch Training to SEAL Inference</p>
+    <br />
+    <p class="author">Wei Ao</p>
+    <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+    <p class="subtitle"> CVPR 2025 Tutorial </p>
+    <p class="date">June 12, 2025</p>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        from Pytorch to SEAL
+    </h2>
+    <div class="r-stack">
+        <img class="fragment current-visible" data-fragment-index="0"
+            src="../assets/images/talks/base/cryptoface_cvpr/pytorch_seal_t1.svg" width="100%" />
+        <img class="fragment current-visible" data-fragment-index="1"
+            src="../assets/images/talks/base/cryptoface_cvpr/pytorch_seal_t2.svg" width="100%" />
+        <img class="fragment current-visible" data-fragment-index="2"
+            src="../assets/images/talks/base/cryptoface_cvpr/pytorch_seal_t3.svg" width="100%" />
+    </div>
+</section>
+
+
+<section data-background="#511EA8" id="seal">
+    <h2>Microsoft SEAL</h2>
+    <center><span style="color: rgb(255, 140, 0)">easy-to-use</span> <span
+            style="color: rgb(0, 255, 38)">open-source</span> <span style="color: rgb(255, 81, 0)">C++</span>
+        homomorphic encryption library </center>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">Installing Microsoft SEAL</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="0">Download SEAL <a
+                        href="https://github.com/microsoft/SEAL.git"> https://github.com/microsoft/SEAL.git</a></li>
+                <li class="fragment" data-fragment-index="1">Build SEAL </li>
+                <pre class="fragment" data-fragment-index="1">
+                    <code data-line-numbers="1-3" style="font-size: 90%;">cmake -S . -B build
+cmake --build build </code>
+                </pre>
+                <li class="fragment" data-fragment-index="2">Install SEAL </li>
+                <pre class="fragment" data-fragment-index="2">
+                    <code data-line-numbers="1-3" style="font-size: 90%;">sudo cmake --install build</code>
+                </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="0">SEAL Coding Examples<a
+                        href="https://github.com/microsoft/SEAL/tree/main/native/examples">
+                        https://github.com/microsoft/SEAL/tree/main/native/examples</a></li>
+                <li class="fragment" data-fragment-index="1">SEAL CKKS Basics: evaluating a polynomial function <a
+                        href="https://github.com/microsoft/SEAL/blob/main/native/examples/5_ckks_basics.cpp">
+                        https://github.com/microsoft/SEAL/blob/main/native/examples/5_ckks_basics.cpp</a> </li>
+                <center style="color: #ff8080" class="fragment" data-fragment-index="1">
+                    y=PI*x^3 + 0.4*x + 1
+                </center>
+                <li class="fragment" data-fragment-index="2">Include Library</li>
+                <pre class="fragment" data-fragment-index="2">
+                <code data-line-numbers="1-3" style="font-size: 90%;">#include "examples.h"
+using namespace std;
+using namespace seal;</code> 
+                </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>CKKS Parameters</li>
+                <pre>
+                <code data-line-numbers="1-6" style="font-size: 90%;">EncryptionParameters parms(scheme_type::ckks);
+size_t poly_modulus_degree = 8192;
+parms.set_poly_modulus_degree(poly_modulus_degree);
+parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+double scale = pow(2.0, 40);
+SEALContext context(parms);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Generate Keys</li>
+                <pre>
+                <code data-line-numbers="1-8" style="font-size: 90%;">KeyGenerator keygen(context);
+auto secret_key = keygen.secret_key();
+PublicKey public_key;
+keygen.create_public_key(public_key);
+RelinKeys relin_keys;
+keygen.create_relin_keys(relin_keys);
+GaloisKeys gal_keys;
+keygen.create_galois_keys(gal_keys);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Operators</li>
+                <pre>
+                <code data-line-numbers="1-8" style="font-size: 90%;">Encryptor encryptor(context, public_key);
+Evaluator evaluator(context);
+Decryptor decryptor(context, secret_key);
+CKKSEncoder encoder(context);
+size_t slot_count = encoder.slot_count();
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Encrypt Vectors</li>
+                <pre>
+                <code data-line-numbers="1-8" style="font-size: 90%;">vector< double > input;
+Plaintext x_plain;
+encoder.encode(input, scale, x_plain);
+Ciphertext x1_encrypted;
+encryptor.encrypt(x_plain, x1_encrypted);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Encode Coefficients</li>
+                <pre>
+                <code data-line-numbers="1-8" style="font-size: 90%;">Plaintext plain_coeff3, plain_coeff1, plain_coeff0;
+encoder.encode(3.14159265, scale, plain_coeff3);
+encoder.encode(0.4, scale, plain_coeff1);
+encoder.encode(1.0, scale, plain_coeff0);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Compute PI*x^3=x^2*(PI*x)</li>
+                <pre>
+                <code data-line-numbers="1-13" style="font-size: 90%;">/* compute x^2 */
+Ciphertext x3_encrypted;
+evaluator.square(x1_encrypted, x3_encrypted);
+evaluator.relinearize_inplace(x3_encrypted, relin_keys);
+evaluator.rescale_to_next_inplace(x3_encrypted);
+/* compute PI*x */
+Ciphertext x1_encrypted_coeff3;
+evaluator.multiply_plain(x1_encrypted, plain_coeff3, x1_encrypted_coeff3);
+evaluator.rescale_to_next_inplace(x1_encrypted_coeff3);
+/* compute x^2*(PI*x) */
+evaluator.multiply_inplace(x3_encrypted, x1_encrypted_coeff3);
+evaluator.relinearize_inplace(x3_encrypted, relin_keys);
+evaluator.rescale_to_next_inplace(x3_encrypted);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Compute 0.4*x </li>
+                <pre>
+                <code data-line-numbers="1-13" style="font-size: 90%;">evaluator.multiply_plain_inplace(x1_encrypted, plain_coeff1);
+evaluator.rescale_to_next_inplace(x1_encrypted);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Compute PI*x^3 + 0.4*x </li>
+                <pre>
+                <code data-line-numbers="1-13" style="font-size: 90%;">x3_encrypted.scale() = pow(2.0, 40);
+x1_encrypted.scale() = pow(2.0, 40);
+parms_id_type last_parms_id = x3_encrypted.parms_id();
+evaluator.mod_switch_to_inplace(x1_encrypted, last_parms_id);
+evaluator.mod_switch_to_inplace(plain_coeff0, last_parms_id);
+Ciphertext encrypted_result;
+evaluator.add(x3_encrypted, x1_encrypted, encrypted_result);
+evaluator.add_plain_inplace(encrypted_result, plain_coeff0);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2 style="font-size: 200%;">SEAL Basics</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li>Decrypt result</li>
+                <pre>
+                <code data-line-numbers="1-13" style="font-size: 90%;">Plaintext plain_result;
+decryptor.decrypt(encrypted_result, plain_result);
+vector< double > result;
+encoder.decode(plain_result, result);
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://github.com/microsoft/SEAL" linktarget="https://github.com/microsoft/SEAL">
+                https://github.com/microsoft/SEAL </a>
+        </li>
+    </ul>
+</section>
+
+<section data-background="#511EA8" id="resnet">
+    <h2>Encrypted CNNs with SEAL</h2>
+    <center><span style="color: rgb(255, 140, 0)">ResNets</span> with <span style="color: rgb(0, 255, 38)">FHE</span>
+    </center>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">MPCNN: Multiplexed Parallel Convolution with FHE</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="0">Download MPCNN <a
+                        href="https://github.com/snu-ccl/FHE-MP-CNN"> https://github.com/snu-ccl/FHE-MP-CNN</a></li>
+                <li class="fragment" data-fragment-index="1">Install GMP </li>
+                <pre class="fragment" data-fragment-index="1">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">wget https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+tar xf gmp-6.2.1.tar.xz
+cd gmp-6.2.1
+./configure
+make
+make check
+sudo make install</code>  </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/snu-ccl/FHE-MP-CNN"> https://github.com/snu-ccl/FHE-MP-CNN </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+
+<section>
+    <h2 style="font-size: 110%;">MPCNN: Multiplexed Parallel Convolution with FHE</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="1">Install NTL </li>
+                <pre class="fragment" data-fragment-index="1">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">wget https://libntl.org/ntl-11.4.3.tar.gz
+tar xf ntl-11.4.3.tar.gz
+cd ntl-11.4.3/src
+./configure
+make
+make check
+sudo make install</code>
+                    </pre>
+                <li class="fragment" data-fragment-index="2">Install OpenMP </li>
+                <pre class="fragment" data-fragment-index="2">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">sudo apt-get update
+sudo apt-get install libomp-dev</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/snu-ccl/FHE-MP-CNN"> https://github.com/snu-ccl/FHE-MP-CNN </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">MPCNN: Multiplexed Parallel Convolution with FHE</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="1">Compile SEAL with Bootstrapping </li>
+                <pre class="fragment" data-fragment-index="1">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">cd cnn_ckks/cpu-ckks/single-key/seal-modified-3.6.6
+cmake -S . -B build
+cmake --build build
+sudo cmake --install build</code>
+                    </pre>
+                <li class="fragment" data-fragment-index="2">Compile MPCNN </li>
+                <pre class="fragment" data-fragment-index="2">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">cd cnn_ckks
+cmake -S . -B build
+cd build
+make</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/snu-ccl/FHE-MP-CNN"> https://github.com/snu-ccl/FHE-MP-CNN </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">MPCNN: Multiplexed Parallel Convolution with FHE</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li class="fragment" data-fragment-index="1"> Encrypte Images <a
+                        href="https://github.com/snu-ccl/FHE-MP-CNN/blob/main-3.6.6/cnn_ckks/cpu-ckks/single-key/cnn/infer_seal.cpp">
+                        infer_seal.cpp </a> </li>
+                <pre class="fragment" data-fragment-index="1">
+                    <code data-line-numbers="1-7" style="font-size: 90%;">in.open("../../../testFile/test_values.txt");
+for(long i=0; i< 1 << logn; i++) image.emplace_back(0);
+for(long i=0; i < 32*32*3 *image_id; i++) {in>>val;}
+for(long i=0; i < 32*32*3; i++) {in>>val; image[i]=val;}  in.close();
+for(long i=n/init_p; i < n; i++) image[i] = image[i%(n/init_p)];
+cnn = TensorCipher(logn, 1, 32, 32, 3, 3, init_p, image, encryptor, encoder, logq);
+</code> </pre>
+                <li class="fragment" data-fragment-index="2"> MPCNN Layers <a
+                        href="https://github.com/snu-ccl/FHE-MP-CNN/blob/main-3.6.6/cnn_ckks/cpu-ckks/single-key/cnn/infer_seal.cpp">
+                        infer_seal.cpp </a> </li>
+                <pre class="fragment" data-fragment-index="2">
+                    <code data-line-numbers="1-4" style="font-size: 90%;">multiplexed_parallel_convolution_print(cnn, cnn, co, st, fh, fw, conv_weight[stage], bn_running_var[stage], bn_weight[stage], epsilon, encoder, encryptor, evaluator, gal_keys, cipher_pool, output, decryptor, context, stage);
+multiplexed_parallel_batch_norm_seal_print(cnn, cnn, bn_bias[stage], bn_running_mean[stage], bn_running_var[stage], bn_weight[stage], epsilon, encoder, encryptor, evaluator, B, output, decryptor, context, stage);
+bootstrap_print(cnn, cnn, bootstrapper, output, decryptor, encoder, context, stage);
+approx_ReLU_seal_print(cnn, cnn, comp_no, deg, alpha, tree, scaled_val, logp, encryptor, evaluator, decryptor, encoder, public_key, secret_key, relin_keys, B, output, context, gal_keys, stage);
+</code>
+                    </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/snu-ccl/FHE-MP-CNN"> https://github.com/snu-ccl/FHE-MP-CNN </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section data-background="#511EA8" id="pytorch">
+    <h2>Training CryptoFace on Pytorch</h2>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">Training Face Recognition Models</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li> Face Recognition Models <a href="https://github.com/human-analysis/CryptoFace/train.py"> train.py
+                    </a> </li>
+                <pre>
+                    <code data-line-numbers="1-8" style="font-size: 90%;">class FaceModel(nn.Module):
+    def __init__(self, backbone, head):
+        super().__init__()
+        self.backbone = backbone
+        self.head = head
+backbone = build_model(args)
+head = ArcFace(256, args.num_classes)
+model = FaceModel(backbone, head)
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/human-analysis/CryptoFace"> https://github.com/human-analysis/CryptoFace
+                </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">Training Face Recognition Models</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li> Training Setups <a href="https://github.com/human-analysis/CryptoFace/train.py"> train.py </a>
+                </li>
+                <pre>
+                    <code data-line-numbers="1-8" style="font-size: 90%;">optimizer = optim.SGD([{'params': [model.head.kernel], 'weight_decay': args.weight_decay},
+                            {'params': model.backbone.parameters()}], lr=args.lr, momentum=args.momentum)
+scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=args.lr_milestones, gamma=args.lr_gamma)
+criterion = nn.CrossEntropyLoss()
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/human-analysis/CryptoFace"> https://github.com/human-analysis/CryptoFace
+                </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">Training Face Recognition Models</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li> Backbone <a href="https://github.com/human-analysis/CryptoFace/models/pcnn.py"> pcnn.py </a> </li>
+                <pre>
+                    <code data-line-numbers="1-12" style="font-size: 90%;">class Backbone(nn.Module):
+    def __init__(self, output_size):
+        super(Backbone, self).__init__()
+        self.conv = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.layers = nn.Sequential(HerPNConv(16, 16),
+                                    HerPNConv(16, 32, 2),
+                                    HerPNConv(32, 32),
+                                    HerPNConv(32, 64, 2),
+                                    HerPNConv(64, 64))
+        self.herpnpool = HerPNPool(64, output_size=output_size)
+        self.flatten = Flatten()
+        self.bn = nn.BatchNorm1d(output_size[0] * output_size[1] * 64)
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/human-analysis/CryptoFace"> https://github.com/human-analysis/CryptoFace
+                </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 style="font-size: 110%;">Training Face Recognition Models</h2>
+    <br>
+    <div style="width:100%;font-size: 70%;">
+        <ul>
+            <ul>
+                <li> Backbone <a href="https://github.com/human-analysis/CryptoFace/models/head.py"> head.py </a> </li>
+                <pre>
+                    <code data-line-numbers="1-16" style="font-size: 90%;">class ArcFace(nn.Module):
+    def __init__(self, embedding_dim: int, num_classes: int, s: float = 64., m: float = 0.5):
+        super(ArcFace, self).__init__()
+        self.kernel = nn.Parameter(torch.Tensor(embedding_dim, num_classes))
+        self.kernel.data.uniform_(-1, 1).renorm_(2, 1, 1e-5).mul_(1e5)
+        self.num_classes = num_classes
+        self.m = m
+        self.s = s
+        self.eps = 1e-4
+    def forward(self, embeddings: torch.Tensor, labels: torch.Tensor):
+        .... // normalize 
+        theta = cosine.acos()
+        theta_m = torch.clip(theta + m_hot, min=self.eps, max=math.pi - self.eps)
+        cosine_m = theta_m.cos()
+        scaled_cosine_m = cosine_m * self.s
+        return scaled_cosine_m
+</code> </pre>
+            </ul>
+        </ul>
+    </div>
+    <div>
+        <ul style="font-size: 50%; line-height: 100%">
+            <li>
+                <a href="https://github.com/human-analysis/CryptoFace"> https://github.com/human-analysis/CryptoFace
+                </a> <br>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section data-background="#511EA8" id="cryptoface">
+    <h2>Benchmark CryptoFace on SEAL</h2>
+</section>
+
+<!-- <section>
+    <h2 style="font-size: 200%;">Getting started</h2>
+    <br>
+    <div id="right" class="event-docker" style="display: flex;">
+        <i class="fab fa-docker fa-4x" style="color:#0db7ed;"></i>
+    </div>
+    <div style="width:100%;font-size: 70%;" >
+        <ul>
+            <ul>
+                <li>Install Docker Desktop <a href="https://www.docker.com/products/docker-desktop/"> https://www.docker.com/products/docker-desktop/</a></li>
+                <li>Pull the docker image <a href="https://hub.docker.com/repository/docker/aminabassit/cvpr2025-tutorial"> aminabassit/cvpr2025-tutorial</a></li>
+                <li>Run the docker image on port 8888</li> 
+                <li>Go to <a href="http://localhost:8888/">http://localhost:8888/</a></li>
+                <li>Pull and run the docker image using command line</li>           
+
+            </ul>
+        </ul>
+        <pre>
+            <code data-line-numbers="1-3" style="font-size: 90%;">sudo docker pull aminabassit/cvpr2025-tutorial:latest
+sudo docker run --name cvpr2025-tuto -d -p 8888:8888 aminabassit/cvpr2025-tutorial:latest
+            </code>
+        </pre>
+    </div>
+</section>
+
+<section>
+    <h3>Questions <i class="fas fa-question fa-2x" style="color:#db3535;"></i></h3>
+</section> -->
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

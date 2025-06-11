@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Computer Vision over Homomorphically Encrypted Data</title>
+  <meta name="author" content="Vishnu Boddeti">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section>
+    <p class="title">Computer Vision over Homomorphically Encrypted Data</p>
+    <p class="subtitle"> CVPR 2025 Tutorial </p>
+    <p class="date">June 12, 2025</p>
+
+    <div id="left" style="width:20%;">
+        <br>
+    </div>
+    <div id="left" style="width:20%;">
+        <img width=160 class="mr-3" src="/assets/images/organizers/cropped-amina-bassit.jpg">
+        <figcaption style=" text-align: center;"> <a href="https://aminabassit.github.io/" target="_blank">Amina
+                Bassit</a>
+        </figcaption>
+    </div>
+    <div id="left" style="width:20%;">
+        <img width=172 class="mr-3" src="/assets/images/organizers/Wei-Ao.jpg">
+        <figcaption style="text-align: center;"> <a href="https://wei-ao.github.io/" target="_blank">Wei Ao</a>
+        </figcaption>
+    </div>
+    <div id="left" style="width:20%;">
+        <img width=170 class="mr-3" src="/assets/images/organizers/cropped-vishnu-boddeti.jpg">
+        <figcaption style="text-align: center;"> <a href="https://hal.cse.msu.edu" target="_blank">Vishnu Boddeti</a>
+        </figcaption>
+    </div>
+    <div id="left" style="width:20%;">
+        <br>
+    </div>
+</section>
+
+<section>
+    <h2>Progress In Artificial Intelligence</h2>
+    <div id="left" style="width: 50%">
+        <blockquote>Speech Processing</blockquote>
+        <blockquote>Image Analysis</blockquote>
+    </div>
+    <div id="left" style="width: 50%">
+        <blockquote>Natural Language Processing</blockquote>
+        <blockquote>Physical Sciences</blockquote>
+    </div>
+    <div id="left" style="width: 100%">
+        <br /><br /><br />
+        <center>
+            <span style="color: #ff8080"><u>Key Drivers</u></span>
+        </center>
+        <center>
+            <span style="font-size: 200%">Data, Compute, Algorithms</span>
+        </center>
+        <br />
+        <center class="fragment" style="color: cyan">
+            <u>Widespread deployment in the real-world, especially as cloud
+                services.</u>
+        </center>
+    </div>
+</section>
+
+<section data-background="#511EA8">
+    <h2>State-of-Affairs</h2>
+    (report from the academic-world)
+</section>
+
+<section data-transition="slide" data-background="#b5533c">
+    <h2 class="r-fit-text">Attacks on Face Recognition Systems</h2>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Attacks on Face Recognition Systems: Template Inversion</h2>
+    <div class="r-stack">
+        <img src="/assets/images/talks/recOver-1.svg" width="100%">
+        <img src="/assets/images/talks/base/FR-issues.svg" width="100%">
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 style="color:black;" class="r-fit-text">Template inversion attack on High resolution image</h2>
+    <br>
+    <br>
+    <div id="center" style="width:100%;">
+        <img src="/assets/images/talks/highResDiagram.png" width="100%">
+        <figcaption style="font-size: 80%;"><a
+                href="https://proceedings.neurips.cc/paper_files/paper/2023/file/29e4b51d45dc8f534260adc45b587363-Paper-Conference.pdf">[SM23]
+                High resolution image reconstruction</a>
+        </figcaption>
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">From Template inversion attack to Replay and Presentation attack</h2>
+    <div id="center" style="width:100%;">
+        <img src="/assets/images/talks/recOver-1-att-3.svg" width="100%">
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color:black;">Template inversion attack <a style="color: red;">enables</a>
+        Presentation attack
+    </h2>
+    <br>
+    <br>
+    <div>
+        <img src="/assets/images/talks/interconnectedAttacks.png" width="100%">
+        <figcaption style="font-size: 40%;"><a
+                href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10239446">[SM23] Comprehensive vulnerability
+                evaluation of face recognition systems to template inversion attacks via 3D face reconstruction</a>
+        </figcaption>
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Presentation attack via digital replay and printed photograph</h2>
+    <div id="images-container" style="display: flex; justify-content: center;">
+        <div id="left" style="width:80%; text-align: center;">
+            <img width=300 class="mr-3" src="/assets/images/talks/printedPhoto.png">
+            <figcaption style="font-size: 60%;">Presentation attack via printed photograph</figcaption>
+        </div>
+        <div id="right" style="width: 80%; text-align: center;">
+            <img width=300 class="mr-3" src="/assets/images/talks/replayAttack.png">
+            <figcaption style="font-size: 60%;">Presentation attack via digital replay</figcaption>
+        </div>
+    </div>
+    <br>
+    <ul style="font-size: 40%;"><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10239446">[SM23]
+            Comprehensive vulnerability evaluation of face recognition systems to template inversion attacks via 3D face
+            reconstruction</a></ul>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65">
+    <h2 class="r-fit-text">Attacks on Augmented Reality Systems</h2>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Privacy Leakage in Augmented Reality</h2>
+    <center><img src="/assets/images/talks/inverse-sfm.png" width="100%"></center>
+    <div id="left" style="width:100%">
+        <ul style="font-size:50%">
+            <li>Pittaluga et. al., "Revealing Scenes by Inverting Structure from Motion Reconstructions", CVPR 2019</li>
+        </ul>
+    </div>
+</section>
+
+<section data-background-iframe="https://www.francescopittaluga.com/invsfm/results.html" data-background-interactive
+    data-background="white">
+</section>
+
+<section data-transition="slide" data-background="#4d7e65">
+    <h2>Attacks on Large Language Models</h2>
+</section>
+
+<section data-background="white">
+    <h2 style="color:black;">Attacks on Text Embeddings</h2>
+    <img src="/assets/images/talks/vec2text.png" width="80%">
+</section>
+
+<section data-background="white">
+    <h2 style="color:black;">Attacks on Language Models</h2>
+    <img src="/assets/images/talks/tokenprob2text.png" width="80%">
+</section>
+
+<section data-background="white">
+    <h2 style="color:black;">Attacks on User Prompts</h2>
+    <img src="/assets/images/talks/text2prompt.png" width="90%">
+</section>
+
+<section data-background="#511EA8">
+    <h2>State-of-Affairs</h2>
+    (report from the real-world)
+</section>
+
+<section data-background-iframe="https://www.wired.com/story/outabox-facial-recognition-breach/"
+    data-background-interactive>
+</section>
+
+<section data-background="white">
+    <center style="font-size:75%"><a
+            href="https://www.crikey.com.au/2024/09/19/patient-scan-data-train-artificial-intelligence-consent/"
+            target="_blank">"Australia's biggest medical imaging lab is training AI on its scan data. Patients have no
+            idea"</a></center>
+    <br>
+    <div id="left" style="width:50%">
+        <img src="/assets/images/talks/logo-crikey.svg" width="40%">
+    </div>
+    <div id="right" style="width:50%;color:black;">
+        Sep 19, 2024
+    </div>
+    <div id="left" style="width:100%">
+        <img src="/assets/images/talks/australia-medical-image.png" width="80%">
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Healthcare Data Breaches of 500+ Records (2009-2024)</h2>
+
+    <div id="hipaa-breach-statistics" style="transform: scale(1.0);"></div>
+    <script>
+        var xlabels = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+        var trace = {
+            type: 'bar',
+            x: xlabels,
+            y: [18, 199, 200, 218, 277, 314, 270, 328, 358, 369, 511, 663, 715, 720, 747, 667],
+            marker: {
+                color: '#A2C8A2'
+            },
+            text: [18, 199, 200, 218, 277, 314, 270, 328, 358, 369, 511, 663, 715, 720, 747, 667],
+            textposition: 'auto'
+        };
+
+        var layout = {
+            font: { size: 12, color: "#FFFFFF" },
+            plot_bgcolor: "#333333",
+            paper_bgcolor: "#333333",
+            yaxis: {
+                autorange: true,
+                showline: true,
+                color: 'white',
+                mirror: true,
+                gridcolor: 'rgba(255, 255, 255, 0.3)',
+            },
+            xaxis: {
+                showline: true,
+                color: 'white',
+                mirror: true
+            },
+        };
+
+        var config = { responsive: true, displaylogo: false };
+        Plotly.newPlot('hipaa-breach-statistics', [trace], layout, config);
+    </script>
+    <ul style="font-size: 50%">
+        <a href="https://www.hipaajournal.com/healthcare-data-breach-statistics/">Source: The HIPAA Journal</a>
+    </ul>
+</section>
+
+<section>
+    <center><span style="font-size:120%">Real world AI systems are very effective, but</span></center>
+    <br><br>
+    <center><span style="color:#ff8080;font-size:150%">suffer from privacy and security vulnerabilities.</span>
+    </center>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Privacy and Security Requirements in AI</h2>
+    <img src="/assets/images/talks/gdpr.png" width="80%" />
+    <center>
+        <blockquote>...consent should be given for all purposes...</blockquote>
+    </center>
+</section>
+
+<section data-transition="slide" data-background="#b5533c">
+    <h2>Privacy vs Security</h2>
+</section>
+
+<section>
+    <h2>Privacy vs Security</h2>
+    <div class="r-stack">
+        <center class="fragment current-visible" data-fragment-index="0" style="font-size: 90%;"><span
+                style="color: #FF66C4;">Privacy</span> and <span style="color: aqua;">security</span> are often
+            conflated with each other despite their differences...</center>
+        <img class="fragment current-visible" data-fragment-index="1" src="/assets/images/talks/Privacy.svg"
+            width="100%">
+        <img class="fragment" data-fragment-index="2" src="/assets/images/talks/Security&Privacy-v2.svg" width="100%">
+    </div>
+    <div class="r-stack">
+        <lu class="fragment current-visible" data-fragment-index="1">Assuming access, what sensitive information can be
+            learned?</lu>
+        <lu class="fragment current-visible" data-fragment-index="2">How to gain access to sensitive assets?</lu>
+        <blockquote class="fragment" data-fragment-index="4" style="border-radius: 10px;">There is no <span
+                style="color: #FF66C4;">privacy</span> without <span style="color: aqua;">security</span></blockquote>
+    </div>
+</section>
+
+<section>
+    <h2>Tutorial's Agenda</h2>
+    <br /><br />
+    <center>
+        <span style="font-size: 200%"><span style="color: yellowgreen"> Computer Vision + Encryption</span></span>
+    </center>
+</section>
+
+<section>
+    <h2>What are we trying to protect in AI?</h2>
+    <br><br>
+    <img src="/assets/images/talks/function-evaluation-1.svg" width="75%">
+    <br><br>
+    <div id="left" style="width:50%;">
+        <ul>
+            <li>$x$: images, audio, video, text</li>
+        </ul>
+    </div>
+    <div id="right" style="width:50%;">
+        <ul>
+            <li>$f$: parameters, functional form</li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2>Data Privacy</h2>
+    <img src="/assets/images/talks/function-evaluation-2.svg" width="75%">
+    <div id="left" style="width:45%;">
+        <ul>
+            <ul>
+                <li>Protect user privacy.</li>
+                <li>Prevent unauthorized access.</li>
+            </ul>
+        </ul>
+    </div>
+    <div id="right" style="width:55%;">
+        <ul>
+            <ul>
+                <li>Gain user's trust.</li>
+                <li>Comply with regulations like GDPR.</li>
+            </ul>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">
+        Standard Encryption: Data is <span style="color: #ff8080">Encrypted</span> Only During
+        <span style="color: #ff8080">Communication</span>
+    </h2>
+    <img src="/assets/images/talks/encrypted-computations.svg" width="55%" />
+    <blockquote class="fragment">
+        Privacy of user data is not guaranteed.
+    </blockquote>
+</section>
+
+<section>
+    <h2>Encryption Schemes</h2>
+    <div id="left" style="width:50%;">
+        <div class="box" style="width: 90%">
+            <div class="box-header" style="font-size: 75%">
+                What we have.
+            </div>
+            <div class="box-content">
+                <figure><img src="/assets/images/talks/base/enc-stages-1.svg" width="55%" />
+                </figure>
+            </div>
+        </div>
+    </div>
+    <div id="right" style="width:50%;">
+        <div class="box" style="width: 90%">
+            <div class="green-box-header" style="font-size: 75%">
+                What we want.
+            </div>
+            <div class="box-content">
+                <figure><img src="/assets/images/talks/base/enc-stages-2.svg" width="55%" />
+                </figure>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section data-background="#511EA8">
+    <h2 class="r-fit-text">Is there an encryption scheme that satisfies our security desiderata?</h2>
+    <center class="fragment">Fully Homomorphic Encryption</center>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        What is Fully Homomorphic Encryption?
+    </h2>
+    <blockquote>
+        Run programs on encrypted data without ever decrypting it.
+        <center class="fragment" data-fragment-index="0">
+            FHE can—in theory—handle universal computation.
+        </center>
+    </blockquote>
+    <div id="left" style="width: 70%">
+        <img class="fragment" data-fragment-index="1" src="/assets/images/talks/application-conway-game-of-life.png"
+            width=70%">
+        <img class="fragment" data-fragment-index="2" src="/assets/images/talks/application-processor-simulation.png"
+            width="70%" />
+    </div>
+    <div id="right" style="width: 30%">
+        <br /><br />
+        <center style="color: black" class="fragment" data-fragment-index="1">
+            Conway's Game of Life
+        </center>
+        <br /><br /><br />
+        <center style="color: black" class="fragment" data-fragment-index="2">
+            Microprocessor Simulation
+        </center>
+    </div>
+</section>
+
+<section data-background-video="/assets/videos/talks/apple-fhe-caller-id.m4v" data-background-video-loop
+    data-background-video-muted>
+    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+    <center>
+        <a href="https://machinelearning.apple.com/research/homomorphic-encryption" linktarget="_blank">Apple: Secure
+            Caller
+            ID and Secure Photo Search</a>
+    </center>
+</section>
+
+<section data-background="white">
+    <img src="/assets/images/talks/microsoft-fhe-password.gif" alt="" width="100%" />
+    <center>
+        <a href="https://www.microsoft.com/en-us/research/blog/password-monitor-safeguarding-passwords-in-microsoft-edge/"
+            linktarget="_blank">Microsoft: Secure Password Search in Edge Browser</a>
+    </center>
+</section>
+
+<section data-background="#511EA8">
+    <h2>What is this tutorial about?</h2>
+    <br><br>
+    <center class="fragment">“Encrypted Computer Vision. Everything. Everywhere. Always Secure.”</center>
+</section>
+
+<section>
+    <h2>Foundational Concepts</h2>
+    <div class="fragment" data-fragment-index="0">
+        <center>
+            <div class="box" style="width: 90%">
+                <div class="green-box-header" style="font-size: 75%">
+                    CKKS FHE Scheme
+                </div>
+                <div class="box-content">
+                    <figure><img src="/assets/images/talks/lhe-process.svg" alt="" width="100%"></figure>
+                </div>
+            </div>
+        </center>
+    </div>
+
+    <br>
+
+    <div class="fragment" data-fragment-index="1">
+        <center>
+            <div class="box" style="width: 90%">
+                <div class="red-box-header" style="font-size: 75%">
+                    Making CNNs FHE-Friendly
+                </div>
+                <div class="box-content">
+                    <figure><img src="/assets/images/talks/base/autofhe/autofhe-layerwise-search-3.svg" alt=""
+                            width="80%"></figure>
+                </div>
+            </div>
+        </center>
+        <center>... and more.</center>
+    </div>
+</section>
+
+<section>
+    <h2>A Few Applications</h2>
+    <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);">
+        <div class="box" style="width: 50%;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Private Image-to-Image (FR)
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center;">
+                <img src="../assets/images/talks/base/FR-search.svg" width="60%" />
+            </div>
+        </div>
+        <div class="box" style="width: 50%; background-color: white;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Private Text-to-Text (RAG)
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
+                <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
+            </div>
+        </div>
+        <div class="box" style="width: 50%; background-color: white;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Private Text-to-Image (CLIP)
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
+                <img src="../assets/images/talks/base/CLIP.png" width="90%" />
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div id="left" style="width: 50%;">
+        <div class="box" id="center" style="background-color: white;  width: 90%;">
+            <div class="red-box-header" style="font-size: 75%;">AutoFHE: Automated Design of FHE-Friendly CNNs</div>
+            <div class="box-content">
+                <center>
+                    <img src="/assets/images/talks/base/fhe/cryptoface-verification.svg" width="95%" />
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <div id="right" style="width: 50%;">
+        <div class="box" id="center" style="background-color: white;  width: 90%;">
+            <div class="red-box-header" style="font-size: 75%;">CryptoFace: End-to-End Encrypted Face Recognition</div>
+            <div class="box-content">
+                <center>
+                    <img src="/assets/images/talks/base/fhe/cryptoface-verification.svg" width="95%" />
+                </center>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Hands-On Demo</h2>
+    <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);">
+        <div class="box" style="width: 50%;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Face Recognition
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center;">
+                <img src="../assets/images/talks/base/FR-search.svg" width="60%" />
+            </div>
+        </div>
+        <div class="box" style="width: 50%; background-color: white;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Private RAG
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
+                <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
+            </div>
+        </div>
+        <div class="box" style="width: 50%; background-color: white;">
+            <div class="green-box-header" style="font-size: 75%;">
+                Private CLIP
+            </div>
+            <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
+                <img src="../assets/images/talks/base/CLIP.png" width="90%" />
+            </div>
+        </div>
+        <div style="width: 50%;">
+            <br><br>
+            <center>OpenFHE - Python/C++</center>
+        </div>
+    </div>
+
+    <br>
+
+    <div id="left" style="width: 50%;">
+        <div class="box" id="center" style="background-color: white;  width: 90%;">
+            <div class="red-box-header" style="font-size: 75%;">CryptoFace: End-to-End Encrypted Face Recognition</div>
+            <div class="box-content">
+                <center>
+                    <img src="/assets/images/talks/base/fhe/cryptoface-verification.svg" width="95%" />
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <div id="right" style="width: 50%;">
+        <br><br>
+        <center>Pytorch</center>
+        <center>Microsoft SEAL - C++</center>
+    </div>
+</section>
+
+<!-- <section>
+    <h2 class="r-fit-text">FHE-based retrieval extends beyond face recognition</h2>
+    <br><br>
+    <div id="center" style="text-align: center; font-size: 80%; width: 70%;">
+        <span style="color: #ff8080;"><em>Text embeddings are highly invertible, recovering $89\%$ of PII (e.g., full
+                names) from clinical note embeddings <a
+                    href="https://openreview.net/pdf?id=EDuKP7DqCk">[MK+23].</a></em></span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 1.5em;">
+
+        <div id="left" style="width: 50%; font-size: 80%;">
+            <div id="left" style="width: 90%;">
+                <blockquote>Private text-to-image retrieval (CLIP)</blockquote>
+            </div>
+            <br>
+            <div id="left" style="width: 90%;">
+                <blockquote>Private text retrieval in retrieval-augmented generation (RAG)</blockquote>
+            </div>
+        </div>
+        <div class="box" id="right" style="background-color: white;  width: 50%;">
+            <div class="box-content">
+                <center>
+                    <img src="/assets/images/talks/base/applications-FHE.svg" width="95%" />
+                </center>
+            </div>
+        </div>
+    </div>
+    <div id="left" style="width: 100%; font-size: 60%; margin-top: 1em;">
+        <span><a href="https://openreview.net/pdf?id=EDuKP7DqCk">[MK+23] Text Embeddings Reveal (Almost) As Much As
+                Text.</a></span>
+    </div>
+</section> -->
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Closing Remarks and Q&A</title>
+  <meta name="author" content="Vishnu Boddeti">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section data-background-iframe="../assets/viz/gradient/">
+    <p class="title"> Closing Remarks and Q&A </p>
+    <p class="author">Vishnu Boddeti</p>
+    <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+    <p class="subtitle"> CVPR 2025 Tutorial </p>
+    <p class="date"> June 12, 2025 </p>
+</section>
+
+<section>
+    <h2>From Pixels to Decisions—Encrypted End-to-End.</h2>
+</section>
+
+<section data-background="#4d7e65">
+    <h2 class="r-fit-text">FHE Enables computations on untrusted environments</h2>
+    <center>But...</center>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Checking integrity of biometric operations under Encryption</h2>
+    <div class="r-stack" style="width:100%;">
+        <img class="fragment current-visible" data-fragment-index="0" src="../assets/images/talks/FHE-problem-1.svg"
+            width="80%">
+        <img class="fragment current-visible" data-fragment-index="1" src="../assets/images/talks/FHE-problem-2.svg"
+            width="80%">
+        <img class="fragment current-visible" data-fragment-index="2" src="../assets/images/talks/FHE-problem-3.svg"
+            width="80%">
+        <img class="fragment" data-fragment-index="3" src="../assets/images/talks/FHE-problem.svg" width="80%">
+    </div>
+    <blockquote class="fragment" data-fragment-index="3" style="border-radius: 10px;">We trust <a
+            style="font-weight: bold;color: rgb(255,128,0);">BUT we do not verify</a></span></blockquote>
+    <a class="fragment" data-fragment-index="3" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9585508"
+        style="font-size: 50%;">[BHV+21] Fast and accurate likelihood ratio-based biometric verification secure against
+        malicious adversaries</a>
+</section>
+
+<section data-background="#b5533c">
+    <h2>Going Beyond Data Privacy</h2>
+    <center>An emerging business </center>
+</section>
+
+<section>
+    <h2>What are we trying to protect in AI?</h2>
+    <br><br>
+    <img src="../assets/images/talks/function-evaluation-1.svg" width="75%">
+    <br><br>
+    <div id="left" style="width:50%;">
+        <ul>
+            <li>$x$: images, audio, video, text</li>
+        </ul>
+    </div>
+    <div id="right" style="width:50%;">
+        <ul>
+            <li>$f$: parameters, functional form</li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2>Function Privacy</h2>
+    <img src="../assets/images/talks/function-evaluation-3.svg" width="75%">
+    <div id="left" style="width:44%;">
+        <ul style="font-size:90%;">
+            <ul>
+                <li>Protect intellectual property.</li>
+                <li>Prevent attacks against model.</li>
+            </ul>
+        </ul>
+    </div>
+    <div id="left" style="width:56%;">
+        <ul style="font-size:90%;">
+            <ul>
+                <li>Prevent leakage of training data.</li>
+                <li>Comply with industry security standards.</li>
+            </ul>
+        </ul>
+    </div>
+</section>
+
+<section data-background="#b5533c">
+    <h2>Story So Far...</h2>
+    <br />
+    <blockquote>
+        Co-designing AI and FHE architectures is critical for efficiency.
+    </blockquote>
+</section>
+
+<section data-background="#511EA8">
+    <h2>Missing Piece in the Puzzle</h2>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Hardware Accelerators for FHE</h2>
+    <center>
+        <div id="fhe-hardware" style="width: 95%"></div>
+    </center>
+    <script>
+        var xlabels = [
+            "CPU",
+            "Multi Core CPU",
+            "CPU-AVX-512",
+            "FPGA",
+            "GPU",
+            "ASIC",
+        ];
+        var trace1 = {
+            type: "bar",
+            x: xlabels,
+            y: [1, 10, 10, 100, 100, 10000],
+            marker: {
+                color: [
+                    "rgba(204,204,204,1)",
+                    "rgba(54, 98, 255, 0.8)",
+                    "rgba(204,204,204,1)",
+                    "rgba(204,204,204,1)",
+                    "rgba(204,204,204,1)",
+                    "rgba(222,45,38,0.8)",
+                ],
+            },
+            text: [1, 10, 10, 100, 100, 10000],
+            textfont: {
+                color: ["white", "white", "black", "black", "black", "white"],
+            },
+            textposition: "auto",
+        };
+
+        var data = [trace1];
+
+        var config = { responsive: true, displaylogo: false };
+
+        var layout = {
+            font: { size: 12, color: "#FFFFFF" },
+            plot_bgcolor: "#333333",
+            paper_bgcolor: "#333333",
+            yaxis: {
+                type: "log",
+                autorange: true,
+                showline: true,
+                color: "white",
+                mirror: true,
+                title: "Speedup",
+            },
+            xaxis: {
+                showline: true,
+                color: "white",
+                mirror: true,
+                title: "Hardware Backend",
+            },
+            showlegend: false,
+            legend: {
+                orientation: "h",
+                xanchor: "right",
+                yanchor: "bottom",
+                x: 1.0,
+                y: -0.2,
+            },
+            barmode: "group",
+        };
+        Plotly.newPlot("fhe-hardware", data, layout, config);
+    </script>
+    <center>
+        <a href="https://dualitytech.com/blog/hardware-acceleration-of-fully-homomorphic-encryption-making-privacy-preserving-machine-learning-practical/"
+            linktarget="_blank">Source: Duality Technologies</a>
+    </center>
+</section>
+
+<section>
+    <h2>Concluding Remarks</h2>
+    <br>
+    <ul style="font-size: 75%">
+        <li class="fragment">Data and function privacy are critical for real-world AI systems.</li>
+        <ul>
+            <li class="fragment">End-to-end encrypted AI systems with FHE are feasible.
+                <ul>
+                    <li>
+                        Both <span style="color: cyan">data and function privacy</span> can be realized.
+                    </li>
+                    <li>
+                        Offers <span style="color: orange">strong</span> guarantees.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <li class="fragment">
+            Naive application of HE for AI suffers from prohibitive computational costs.
+        </li>
+        <li class="fragment">
+            Rethinking AI architecture designs is critical for efficiency.
+        </li>
+        <ul>
+            <li class="fragment">
+                Can get at least <span style="color: yellow">10x speed up</span>.
+            </li>
+        </ul>
+    </ul>
+    <blockquote class="fragment" style="font-size: 75%">
+        Exciting research at the intersection of AI, Cryptography, and ASIC Design.
+    </blockquote>
+    <br>
+    <center>
+        <a href="https://hal.cse.msu.edu/" linktarget="_blank">hal.cse.msu.edu</a>
+    </center>
+</section>
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

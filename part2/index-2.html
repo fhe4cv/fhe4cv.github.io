@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>CryptoFace: End-to-End Encrypted Face Recognition</title>
+  <meta name="author" content="Wei Ao">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <!-- Color ramp: ["#559EB1", "#6DB28B", "#8CBB68", "#AFBD4F", "#CFB541", "#E39B39", "#E56E30"] -->
+
+<section data-background-iframe="../assets/viz/gradient/">
+    <p class="title">CryptoFace: End-to-End Encrypted Face Recognition</p>
+    <br />
+    <p class="author">Wei Ao</p>
+    <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+    <p class="subtitle"> CVPR 2025 Tutorial </p>
+    <p class="date">June 12, 2025</p>
+</section>
+
+<section data-background="#511EA8" id="facerecognition">
+    <h2>Face Recognition</h2>
+    <center><em>theories</em>, <em>applications</em> and <em>risks</em> </center>
+</section>
+
+<section>
+    <h2 class="r-fit-text">
+        Face recognition integrates into <span style="color: aqua"> daily practical applications</span>
+    </h2>
+    <div class="r-stack">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/face_applications.svg" width="100%">
+    </div>
+    <br>
+</section>
+
+<section>
+    <h2 class="r-fit-text">deep Face recognition: to learn <span style="color: rgb(255, 140, 0)"> discriminative
+            features</span></h2>
+    <div id="left" style="width: 100%">
+        <div class="r-stack">
+            <img class="fragment current-visible" data-fragment-index="0"
+                src="../assets/images/talks/base/cryptoface_cvpr/face_recognition_step1.png" width="60%" />
+            <img class="fragment current-visible" data-fragment-index="1"
+                src="../assets/images/talks/base/cryptoface_cvpr/face_recognition_step2.png" width="60%" />
+            <img class="fragment current-visible" data-fragment-index="2"
+                src="../assets/images/talks/base/cryptoface_cvpr/face_recognition_step3.png" width="60%" />
+            <img class="fragment current-visible" data-fragment-index="3"
+                src="../assets/images/talks/base/cryptoface_cvpr/face_recognition_step4.png" width="60%" />
+        </div>
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: yellowgreen">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="0">Feature extraction: use the same neural network to extract
+                    features of two face images</li>
+                <li class="fragment" data-fragment-index="2">Comparison: use cosine similarity or normalized L2 distance
+                </li>
+                <li class="fragment" data-fragment-index="3 ">Training face recognition models: adopt margins in Cross
+                    Entropy loss to maximize identity separability</li>
+            </ul>
+        </ul>
+    </div>
+    <div id="left" style="width: 100%">
+        <ul style="font-size: 50%">
+            <a href="https://arxiv.org/abs/1801.07698" linktarget="_blank">Jiankang Deng, Jia Guo, Jing Yang, Niannan
+                Xue, Irene Kotsia, and Stefanos Zafeiriou. ArcFace: Additive angular margin loss for deep face
+                recognition. T-PAMI, 2022.</a>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">
+        What are the <span style="color: #ff66c4"> privacy</span> and
+        <span style="color: aqua"> security </span> risks in Face Recognition?
+    </h2>
+    <div class="r-stack">
+        <img src="../assets/images/talks/base/fhe/recOver-1.svg" width="100%">
+        <img class="fragment current-visible" src="../assets/images/talks/base/fhe/recOver-1-att.svg" width="100%">
+    </div>
+    <br>
+</section>
+
+<section data-background="#511EA8" id="cryptoface">
+    <h2>CryptoFace: End-to-End Encrypted Face Recognition</h2>
+    <center> All-stage security: <em>feature extraction</em>, <em>storage</em> and <em>matching</em>. </center>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black">Encrypting Feature or Image?</h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/feature_or_image.png" width="70%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(205, 200, 50)" style="font-size: 70%">
+            <li class="fragment" data-fragment-index="0">How to design a secure face recognition system?</li>
+        </ul>
+        <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">Security: more secure under attacks</li>
+                <li class="fragment" data-fragment-index="2">Efficiency: faster inference with FHE</li>
+                <li class="fragment" data-fragment-index="3">Performance: better verification or identification accuracy
+                </li>
+            </ul>
+        </ul>
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black">Encrypting Feature with FHE</h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/feature.png" width="100%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="3">Security: only feature protection</li>
+                <li class="fragment" data-fragment-index="1">Efficiency: fast to compute inter-product of two vectors
+                    under FHE</li>
+                <li class="fragment" data-fragment-index="2">Performance: preserve perforamcne thanks to negligible FHE
+                    noise</li>
+            </ul>
+        </ul>
+        <ul style="color: rgb(205, 50, 78)">
+            <li class="fragment" data-fragment-index="4">Is it secure if we only protect features?</li>
+        </ul>
+    </div>
+    <ul style="font-size: 40%">
+        <li>
+            <a href="https://hal.cse.msu.edu/papers/secure-face-matching/" linktarget="_blank"><u>Vishnu
+                    Boddeti</u>,Secure
+                Face Matching Using Fully Homomorphic
+                Encryption, BTAS 2018</a>
+        </li>
+        <li>
+            <a href="https://hal.cse.msu.edu/papers/hers-encrypted-image-search/" linktarget="_blank">Joshua
+                Engelsma,
+                Anil
+                Jain and <u>Vishnu Boddeti</u>, HERS:
+                Homomorphically Encrypted Representation Search, TBIOM 2022</a>
+        </li>
+    </ul>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black">Template Recovery Attack</h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/fhe/cryptoface-features-only.png" width="90%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(205, 53, 50)">
+            <li class="fragment" data-fragment-index="0" style="font-size: 70%">If the client is corrupted by an
+                adversarial, templates on the database would be stolen!!!</li>
+        </ul>
+        <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">step 1: generate adversarial samples (features) and send
+                    them to the server</li>
+                <li class="fragment" data-fragment-index="2">step 2: obtain similarity scores from the server</li>
+                <li class="fragment" data-fragment-index="3">step 3: solve a linear system to resover templates</li>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 40%">
+        <li>
+            <a href="https://ieeexplore.ieee.org/abstract/document/10449211" linktarget="_blank"><u>Amina Bassit</u>, et
+                al. Template recovery attack on homomorphically encrypted biometric recognition systems with unprotected
+                threshold comparison. IJCB 2023.</a>
+        </li>
+    </ul>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black">Template Recovery Attack</h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/fhe/cryptoface-features-only.png" width="90%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(205, 53, 50)">
+            <li class="fragment" data-fragment-index="0" style="font-size: 70%">Why feature-encryption is not secure?
+            </li>
+        </ul>
+        <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">The server takes outsourced features as input</li>
+                <li class="fragment" data-fragment-index="2">The client is easy to manipulate these features</li>
+            </ul>
+        </ul>
+        <ul style="color: rgb(55, 205, 50)">
+            <li class="fragment" data-fragment-index="3" style="font-size: 70%">A secure solution: end-to-end encrypted
+                face recognition (CryptoFace) across all stages!</li>
+        </ul>
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span>: End-to-End Encrypted Face Recognition
+    </h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/fhe/cryptoface-end-to-end-2.png" width="100%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(205, 53, 50)">
+            <li class="fragment" data-fragment-index="0" style="font-size: 70%">If the client is adversarial, it may
+                attempt to infer encrypted features stored on the server.</li>
+        </ul>
+        <ul style="color: rgb(50, 205, 81)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">The client cannot access to features.</li>
+            </ul>
+        </ul>
+        <ul style="color: rgb(205, 53, 50)">
+            <li class="fragment" data-fragment-index="2" style="font-size: 70%">If the server is adversarial, it may
+                attempt to collect biometric data from the client.</li>
+        </ul>
+        <ul style="color: rgb(50, 205, 81)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="3">The server cannot access to the secret key.</li>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://openaccess.thecvf.com/content/CVPR2025/papers/Ao_CryptoFace_End-to-End_Encrypted_Face_Recognition_CVPR_2025_paper.pdf"
+                linktarget="_blank"> <u>Wei Ao</u> and <u>Vishnu Boddeti</u>,
+                CrytoFace:
+                End-to-End Secure Face
+                Recognition, CVPR 2025</a>
+        </li>
+    </ul>
+</section>
+
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span>: End-to-End Encrypted Face Recognition
+    </h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/fhe/cryptoface-end-to-end-2.png" width="100%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(50, 71, 205)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">Security: provide security for face data and database</li>
+                <li class="fragment" data-fragment-index="2">Efficiency: it is slow to evaluate CNNs on encrypted images
+                </li>
+                <li class="fragment" data-fragment-index="3">Performance: it is hard to preserve perforamcne due to
+                    FHE-compatible CNNs</li>
+            </ul>
+        </ul>
+        <ul style="color: rgb(55, 205, 50)">
+            <li class="fragment" data-fragment-index="3" style="font-size: 70%">To solve efficiency and performance
+                challenges, we should co-design FHE-compatible CNNs and inference system. </li>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://openaccess.thecvf.com/content/CVPR2025/papers/Ao_CryptoFace_End-to-End_Encrypted_Face_Recognition_CVPR_2025_paper.pdf"
+                linktarget="_blank"> <u>Wei Ao</u> and <u>Vishnu Boddeti</u>,
+                CryptoFace:
+                End-to-End Secure Face
+                Recognition, CVPR 2025</a>
+        </li>
+    </ul>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span>: End-to-End Encrypted Face Recognition
+    </h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/offline_online.png" width="80%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(0, 2, 17)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">Offline Enrollment: face image and identity</li>
+                <li class="fragment" data-fragment-index="2">Online Verification: probe face image and claimed identity
+                </li>
+            </ul>
+        </ul>
+    </div>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://openaccess.thecvf.com/content/CVPR2025/papers/Ao_CryptoFace_End-to-End_Encrypted_Face_Recognition_CVPR_2025_paper.pdf"
+                linktarget="_blank"> <u>Wei Ao</u> and <u>Vishnu Boddeti</u>,
+                CryptoFace:
+                End-to-End Secure Face
+                Recognition, CVPR 2025</a>
+        </li>
+    </ul>
+</section>
+
+<!-- <section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span> is the first secure face recognition across all stages
+    </h2> 
+    <img src="../assets/images/talks/base/cryptoface_cvpr/target1.svg" width="100%">
+</section> -->
+
+<section data-background="#511EA8" id="cryptofacenet">
+    <h2>CryptoFaceNet: a mixture of CNNs</h2>
+    <center> Co-desining of <em>nueral architecture</em> and <em>FHE system</em>. </center>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        Convolutional Neural Networks over FHE
+    </h2>
+    <div id="left" style="width: 40%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/cnn_over_fhe.png" width="100%" />
+    </div>
+    <div id="right" style="width: 60%">
+        <br />
+        <ul style="color: rgb(16, 36, 187)">
+            <li class="fragment" data-fragment-index="0">How to desin FHE-compatible convolutional neural networks?</li>
+        </ul>
+        <ul style="color: rgb(16, 187, 19)">
+            <li class="fragment" data-fragment-index="1">The objective is to reduce the complexity of rotation and
+                multiplication.</li>
+        </ul>
+        <ul style="color: rgb(0, 2, 17)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="2">Packing for convolutional layers: MPCNN [1]</li>
+                <li class="fragment" data-fragment-index="3">Polynomial approximation for ReLU: AESPA low-degree Hermite
+                    polynomial [2]</li>
+            </ul>
+        </ul>
+    </div>
+    <div id="left" style="width: 100%">
+        <ul style="font-size: 50%">
+            <li>
+                <a href="https://proceedings.mlr.press/v162/lee22e.html" linktarget="_blank">[1] Eunsang Lee, Joon-Woo
+                    Lee, Junghyun Lee, Young-Sik Kim, Yongjune Kim, Jong-Seon No, Woosuk Choi. Low-Complexity Deep
+                    Convolutional Neural Networks on Fully Homomorphic Encryption Using Multiplexed Parallel
+                    Convolutions. ICML 2022. </a>
+            </li>
+            <li>
+                <a href="https://arxiv.org/abs/2201.06699" linktarget="_blank">[2] Jaiyoung Park, Michael Jaemin Kim,
+                    Wonkyung Jung, Jung Ho Ahn. AESPA: Accuracy Preserving Low-degree Polynomial Activation for Fast
+                    Private Inference. </a>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        Depth Optimal Convolutional Block
+    </h2>
+    <div id="left" style="width: 100%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/cryptoface_block.png" width="100%" />
+    </div>
+    <div id="right" style="width: 100%">
+        <ul style="color: rgb(0, 2, 17)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">AESPA block only consumes 8 multiplicative levels.</li>
+                <li class="fragment" data-fragment-index="2">CryptoFaceNet block is a shifted AESPA block and fuses
+                    polynomial coefficients to convolutional weights. CryptoFaceNet reduces levels by 2.</li>
+            </ul>
+        </ul>
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        Mixture of Shallow Patch CNNs
+    </h2>
+    <div id="left" style="width: 40%">
+        <img src="../assets/images/talks/base/cryptoface_cvpr/resolution.png" width="100%" />
+    </div>
+    <div id="right" style="width: 60%">
+        <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/cryptoface_cvpr/inference.png"
+            width="80%" />
+        <ul style="color: rgb(16, 36, 187)">
+            <ul style="font-size: 70%">
+                <li class="fragment" data-fragment-index="1">Shallow patch CNNs (PCNNs) consume <span
+                        style="color: rgb(2, 44, 11)">less levels.</span></li>
+                <li class="fragment" data-fragment-index="2">The mixture of PCNNs can be evaluated in <span
+                        style="color: rgb(2, 44, 11)">parallel</span> under FHE.</li>
+            </ul>
+        </ul>
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        Mixture of Shallow Patch CNNs
+    </h2>
+    <img src="../assets/images/talks/base/fhe/cryptoface-pcnns.png" width="100%" />
+</section>
+
+<!-- <section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        Homomorphic Level Optimal Block
+    </h2>
+    <img src="../assets/images/talks/base/cryptoface_cvpr/cryptoface_block.png" width="100%" />
+</section> -->
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        polynomial approximation for similarity measures
+    </h2>
+    <img src="../assets/images/talks/base/cryptoface_cvpr/measure_app.svg" width="100%" />
+</section>
+
+<section data-background="#511EA8" id="benchmark">
+    <h2>benchmark cryptoface on standard face datasets</h2>
+    <center> Face verification task </center>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Encrypted Face Recognition Evaluation</h2>
+    <div id="left" style="width: 35%">
+        <center>
+            <div class="box" style="width: 70%">
+                <div class="red-box-header" style="font-size: 75%">
+                    Hardware & Software
+                </div>
+                <div class="box-content">
+                    <ul style="font-size: 70%">
+                        <li>Amazon AWS, r5.24xlarge</li>
+                        <li>96 CPUs, 768 GB RAM</li>
+                        <li>Microsoft SEAL, 3.6</li>
+                    </ul>
+                </div>
+            </div>
+        </center>
+    </div>
+    <div id="right" style="width: 65%">
+        <img src="../assets/images/talks/base/fhe/cryptoface-datasets-2.svg" width="80%" />
+    </div>
+</section>
+
+<section>
+    <h2 class="r-fit-text">Encrypted Face Recognition Evaluation</h2>
+    <div id="left" style="width: 100%">
+        <table id="mytable" style="
+        font-size: 50%;
+        text-align: center;
+        vertical-align: middle;
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      ">
+            <thead style="background-color: #4caf50">
+                <tr style="color: black; text-align: center">
+                    <th rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                        Approach
+                    </th>
+                    <th rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                        Resolution
+                    </th>
+                    <th colspan="3" style="padding: 10px; text-align: center">
+                        Backbone
+                    </th>
+                    <th colspan="1" style="padding: 10px; text-align: center">5 Datasets</th>
+                    <th rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                        Latency(s)
+                    </th>
+                    <th rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                        Memory(GB)
+                    </th>
+                </tr>
+                <tr style="color: black; text-align: center">
+                    <th style="padding: 10px; text-align: center">Network</th>
+                    <th style="padding: 10px; text-align: center">Params</th>
+                    <th style="padding: 10px; text-align: center">Boot</th>
+                    <th style="padding: 10px; text-align: center">Average Accuracy<sup><a href="#fn1"
+                                id="ref1">1</a></sup></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <tr style="text-align: center" class="fragment" data-fragment-index="1">
+                    <td style="text-align: center; vertical-align: middle">
+                        AdaFace (non-FHE SOTA)
+                    </td>
+                    <td style="padding: 10px; text-align: center">112x112</td>
+                    <td style="padding: 10px; text-align: center">ResNet100</td>
+                    <td style="padding: 10px; text-align: center">529K</td>
+                    <td style="padding: 10px; text-align: center">NA</td>
+                    <td style="padding: 10px; text-align: center">97.51</td>
+                    <td style="padding: 10px; text-align: center">NA</td>
+                    <td style="padding: 10px; text-align: center">NA</td>
+                </tr> -->
+                <tr style="text-align: center" class="fragment" data-fragment-index="1">
+                    <td rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                        MPCNN
+                    </td>
+                    <td style="padding: 10px; text-align: center">64x64</td>
+                    <td style="padding: 10px; text-align: center">ResNet32</td>
+                    <td style="padding: 10px; text-align: center">0.53M</td>
+                    <td style="padding: 10px; text-align: center">31</td>
+                    <td style="padding: 10px; text-align: center">85.60</td>
+                    <td style="padding: 10px; text-align: center">7,367</td>
+                    <td style="padding: 10px; text-align: center">286</td>
+                </tr>
+                <tr style="text-align: center" class="fragment" data-fragment-index="2">
+                    <td style="padding: 10px; text-align: center">64x64</td>
+                    <td style="padding: 10px; text-align: center">ResNet44</td>
+                    <td style="padding: 10px; text-align: center">0.73M</td>
+                    <td style="padding: 10px; text-align: center">43</td>
+                    <td style="padding: 10px; text-align: center">89.64</td>
+                    <td style="padding: 10px; text-align: center">9,845</td>
+                    <td style="padding: 10px; text-align: center">286</td>
+                </tr>
+                <tr style="text-align: center" class="fragment" data-fragment-index="3">
+                    <td style="padding: 10px; text-align: center">
+                        AutoFHE
+                    </td>
+                    <td style="padding: 10px; text-align: center">64x64</td>
+                    <td style="padding: 10px; text-align: center">ResNet32</td>
+                    <td style="padding: 10px; text-align: center">0.53M</td>
+                    <td style="padding: 10px; text-align: center">8</td>
+                    <td style="padding: 10px; text-align: center">82.69</td>
+                    <td style="padding: 10px; text-align: center">4,001</td>
+                    <td style="padding: 10px; text-align: center">286</td>
+                </tr>
+                <tr style="
+                                background-color: #fff9c4;
+                                font-weight: bold;
+                                color: black;
+                                text-align: center;
+                                " class="fragment" data-fragment-index="4">
+                    <td style="padding: 10px; text-align: center">CryptoFace</td>
+                    <td style="padding: 10px; text-align: center">64x64</td>
+                    <td style="padding: 10px; text-align: center">CryptoFaceNet4</td>
+                    <td style="padding: 10px; text-align: center">0.94M</td>
+                    <td style="padding: 10px; text-align: center">1</td>
+                    <td style="padding: 10px; text-align: center">89.42</td>
+                    <td style="padding: 10px; text-align: center">1,364</td>
+                    <td style="padding: 10px; text-align: center">269</td>
+                </tr>
+                <tr style="
+                                background-color: #fff9c4;
+                                font-weight: bold;
+                                color: black;
+                                text-align: center;
+                                " class="fragment" data-fragment-index="5">
+                    <td style="padding: 10px; text-align: center">CryptoFace</td>
+                    <td style="padding: 10px; text-align: center">96x96</td>
+                    <td style="padding: 10px; text-align: center">CryptoFaceNet9</td>
+                    <td style="padding: 10px; text-align: center">2.12M</td>
+                    <td style="padding: 10px; text-align: center">1</td>
+                    <td style="padding: 10px; text-align: center">90.99</td>
+                    <td style="padding: 10px; text-align: center">1,395</td>
+                    <td style="padding: 10px; text-align: center">276</td>
+                </tr>
+                <tr style="
+                                background-color: #fff9c4;
+                                font-weight: bold;
+                                color: black;
+                                text-align: center;
+                                " class="fragment" data-fragment-index="6">
+                    <td style="padding: 10px; text-align: center">CryptoFace</td>
+                    <td style="padding: 10px; text-align: center">128x128</td>
+                    <td style="padding: 10px; text-align: center">CryptoFaceNet16</td>
+                    <td style="padding: 10px; text-align: center">3.78M</td>
+                    <td style="padding: 10px; text-align: center">1</td>
+                    <td style="padding: 10px; text-align: center">91.46</td>
+                    <td style="padding: 10px; text-align: center">1,446</td>
+                    <td style="padding: 10px; text-align: center">277</td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="footnotes" style="font-size: 50%">
+            <ol>
+                <li id="fn1"> <span style="color: aqua">Average Accuracy: the average one-to-one verification accuracy
+                        across five face datasets, <em>ie</em> LFW, AgeDB, CALFW, CPLFW, CFP-FP<a href="#ref1">↩</span>
+                    </a></li>
+            </ol>
+        </div>
+    </div>
+    <div id="left" style="width: 100%">
+        <blockquote class="fragment" class="fragment" data-fragment-index="7">
+            7.2x speedup (2.7 hours &rarr; 23 mins), while preserving accuracy (89.64 <em>vs</em> 89.42)
+        </blockquote>
+        <blockquote class="fragment" class="fragment" data-fragment-index="8">
+            reduce memory footprint by 17G
+        </blockquote>
+        <blockquote class="fragment" class="fragment" data-fragment-index="9">
+            near-constant latency across different resolutions
+        </blockquote>
+    </div>
+</section>
+
+<!-- <section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        Computational Cost Per Operation
+    </h2>
+    <table style="font-size: 50%; width: 100%; color: black">
+        <thead style="background-color: #add8e6">
+            <tr style="color: black; text-align: center">
+                <th style="padding: 10px; text-align: center">Approach</th>
+                <th style="padding: 10px; text-align: center">Backbone</th>
+                <th style="padding: 10px; text-align: center">Conv</th>
+                <th style="padding: 10px; text-align: center">BN</th>
+                <th style="padding: 10px; text-align: center">Residual</th>
+                <th style="padding: 10px; text-align: center">AvgPool</th>
+                <th style="padding: 10px; text-align: center">Linear</th>
+                <th style="padding: 10px; text-align: center">Activation</th>
+                <th style="padding: 10px; text-align: center">Norm</th>
+                <th style="padding: 10px; text-align: center">Score</th>
+                <th style="padding: 10px; text-align: center">Boot</th>
+                <th style="padding: 10px; text-align: center">Other</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="text-align: center">
+                <td rowspan="2" style="padding: 10px; text-align: center; vertical-align: middle">
+                    MPCNN
+                </td>
+                <td style="padding: 10px; text-align: center">ResNet32</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">896 (12.17%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">28 (0.38%)</td>
+                <td style="padding: 10px; text-align: center">0.5 (0.01%)</td>
+                <td style="padding: 10px; text-align: center">46 (0.62%)</td>
+                <td style="padding: 10px; text-align: center">807 (10.96%)</td>
+                <td style="padding: 10px; text-align: center">583 (7.92%)</td>
+                <td style="padding: 10px; text-align: center">5 (0.07%)</td>
+                <td style="padding: 10px; text-align: center">2 (0.02%)</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">4991 (67.76%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">7 (0.09%)</td>
+            </tr>
+            <tr style="text-align: center">
+                <td style="padding: 10px; text-align: center">ResNet44</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">1214 (12.33%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">39 (0.39%)</td>
+                <td style="padding: 10px; text-align: center">0.7 (0.01%)</td>
+                <td style="padding: 10px; text-align: center">46 (0.46%)</td>
+                <td style="padding: 10px; text-align: center">807 (8.19%)</td>
+                <td style="padding: 10px; text-align: center">807 (8.20%)</td>
+                <td style="padding: 10px; text-align: center">5 (0.05%)</td>
+                <td style="padding: 10px; text-align: center">2 (0.02%)</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">6917 (70.27%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">7 (0.08%)</td>
+            </tr>
+            <tr style="text-align: center">
+                <td style="padding: 10px; text-align: center">AutoFHE$^\dagger$</td>
+                <td style="padding: 10px; text-align: center">ResNet32</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">1966 (49.13%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">28 (0.69%)</td>
+                <td style="padding: 10px; text-align: center">1.7 (0.04%)</td>
+                <td style="padding: 10px; text-align: center">38 (0.95%)</td>
+                <td style="padding: 10px; text-align: center">658 (16.43%)</td>
+                <td style="padding: 10px; text-align: center">17 (0.43%)</td>
+                <td style="padding: 10px; text-align: center">4 (0.10%)</td>
+                <td style="padding: 10px; text-align: center">1 (0.03%)</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: red">1274 (31.84%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">14 (0.34%)</td>
+            </tr>
+            <tr style="font-weight: bold; color: black; text-align: center">
+                <td style="padding: 10px; text-align: center">CryptoFace</td>
+                <td style="padding: 10px; text-align: center">PCNNs</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: blue">858 (62.93%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">2 (0.16%)</td>
+                <td style="padding: 10px; text-align: center">0.1 (0.01%)</td>
+                <td style="padding: 10px; text-align: center">26 (1.94%)</td>
+                <td style="padding: 10px; text-align: center">277 (20.30%)</td>
+                <td style="padding: 10px; text-align: center">13 (0.94%)</td>
+                <td style="padding: 10px; text-align: center">2 (0.11%)</td>
+                <td style="padding: 10px; text-align: center">0.3 (0.02%)</td>
+                <td style="padding: 10px; text-align: center">
+                    <span style="color: blue">141 (10.34%)</span>
+                </td>
+                <td style="padding: 10px; text-align: center">44 (3.26%)</td>
+            </tr>
+        </tbody>
+    </table>
+    <ul style="font-size: 50%">
+        <li>
+            <a href="https://hal.cse.msu.edu/papers"><u>Wei Ao</u> and <u>Vishnu Boddeti</u>, CrytoFace: End-to-End Secure
+                Face
+                Recognition, CVPR 2025</a>
+        </li>
+    </ul>
+</section> -->
+
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        Computational Cost Per Operation
+    </h2>
+    <div class="r-stack">
+        <img class="fragment current-visible" data-fragment-index="0"
+            src="../assets/images/talks/base/cryptoface_cvpr/operation_latency.svg" width="100%" />
+        <img class="fragment current-visible" data-fragment-index="1"
+            src="../assets/images/talks/base/cryptoface_cvpr/operation_latency_boot.svg" width="100%" />
+        <img class="fragment current-visible" data-fragment-index="2"
+            src="../assets/images/talks/base/cryptoface_cvpr/operation_latency_conv.svg" width="100%" />
+        <img class="fragment current-visible" data-fragment-index="3"
+            src="../assets/images/talks/base/cryptoface_cvpr/operation_latency_other.svg" width="100%" />
+    </div>
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span> speeds up inference and improves verification accuracy.
+    </h2>
+    <img src="../assets/images/talks/base/cryptoface_cvpr/target2.svg" width="100%">
+</section>
+
+<section data-background="white">
+    <h2 class="r-fit-text" style="color: black">
+        <span style="color: rgb(25, 0, 255)"> CryptoFace</span> is scalable to high resolution
+    </h2>
+    <img src="../assets/images/talks/base/cryptoface_cvpr/target3.svg" width="100%">
+</section>
+
+<section data-background="white">
+    <h2 style="color: black" class="r-fit-text">
+        benchmark on ijbb and ijbc
+    </h2>
+    <img src="../assets/images/talks/base/cryptoface_cvpr/ijb.png" width="70%" />
+</section>
+
+<section>
+    <h2>Summary and Takeaway</h2>
+    <figure><img src="../assets/images/talks/base/cryptoface_cvpr/target1.svg" alt="" width="70%"></figure>
+    <ul>
+        <ul style="font-size:75%">
+            <li> <span style="color: aqua"> CryptoFace </span> is the first end-to-end encrypted face recognition.</li>
+            <li> <span style="color: aqua"> CryptoFaceNet </span> is efficient and scalable homomorphic architecture.
+            </li>
+            <li> <span style="color: aqua"> End-to-End Secure Face Recognition system </span> demonstrates security,
+                efficacy and good perforamcne on encrypted benchmarks.</li>
+        </ul>
+    </ul>
+</section>
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>

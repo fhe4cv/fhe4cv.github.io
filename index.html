@@ -3,12 +3,14 @@
 
 <head>
 	<meta charset="utf-8" />
+
 	<!-- Customized Bootstrap + Font Awesome + Solarized -->
 	<link href="/css/style.css" rel="stylesheet" media="screen">
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="/assets/images/icons/icon-1.png" />
 
+	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 	<!-- Typekit -->
@@ -79,15 +81,16 @@
 	<div id="header">
 		<nav class="navbar navbar-expand-md navbar-light bg-navbar">
 			<div class="container">
-
+				
 				<a class="navbar-brand" href="/">
+					<img class="logo navbar-brand d-inline-block align-top ml-0 mr-1"
+						src="/assets/images/icons/logo-2.png" width="100%">
 				</a>
-
+				
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
 					aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item">
@@ -120,419 +123,433 @@
 	<div class="container mt-4">
 
 		<div class="row">
-			<div class="col-lg-12">
-				<object class="pull-left biglogo" data="/assets/images/icons/logo-2.png" type="image/webp"></object>
-				<div class="bigtitle logobox">
-					Computer Vision over Homomorphically Encrypted Data
+	<div class="col-lg-12">
+		<object class="pull-left biglogo" data="/assets/images/icons/logo-2.png" type="image/webp"></object>
+		<div class="bigtitle logobox">
+			Computer Vision over Homomorphically Encrypted Data
+		</div>
+	</div>
+</div>
+
+<div class="bigspacer"></div>
+
+<section id="overview">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="smallhead">
+				<p>
+					<i class="fas fa-eye"></i>
+					Over the past decade, computer vision has become foundational across applications such as facial
+					recognition, medical diagnostics, surveillance, and social media. As these systems grow more
+					advanced and proprietary, concerns around privacy and security intensify. For example, when a user
+					uploads a facial image to a cloud-based recognition service, they want to protect their biometric
+					identity, while the service provider must safeguard its proprietary model and private data. This
+					creates complex but critical challenges.
+				</p>
+
+				<p>
+					<i class="fas fa-lock"></i>
+					Data encryption is widely used to address privacy concerns, but conventional schemes require data
+					decryption for processing, which introduces security risks. Fully Homomorphic Encryption (FHE)
+					offers a transformative alternative by enabling computation directly on encrypted data, keeping
+					sensitive information hidden throughout. It also provides post-quantum security, making it resilient
+					to future quantum threats. This is especially valuable in privacy-critical domains such as
+					healthcare, where regulations like HIPAA must be met, or in partially trusted cloud environments.
+				</p>
+
+				<p>
+					<i class="fas fa-exclamation-triangle"></i>
+					Integrating computer vision (CV) with FHE is challenging due to the complexity of CV models and
+					FHE’s limited support for arithmetic operations like addition and multiplication. These operations
+					are insufficient for nonlinear functions common in CV models, such as ReLU, batch normalization, and
+					pooling, which FHE does not natively support. Moreover, encrypted computation is computationally
+					intensive and memory-demanding, leading to high latency and large memory usage. Designing effective
+					CV systems under FHE constraints requires balancing accuracy, efficiency, and resource use, while
+					also creating architectures compatible with FHE.
+				</p>
+				<p>
+					<i class="fas fa-chart-line"></i>
+					Despite these challenges, substantial progress has been made in developing practical CV applications
+					with FHE. Notable examples include private image retrieval using encrypted embeddings, encrypted
+					image classification, and fully encrypted face recognition systems. These advances stem from both
+					improvements in FHE schemes and thoughtful redesigns of traditional CV models to fit FHE
+					constraints. Their success highlights the growing feasibility and importance of secure,
+					privacy-preserving computer vision.
+				</p>
+
+				<p>
+					<i class="fas fa-chalkboard-teacher"></i>
+					This tutorial is designed to offer a detailed and accessible introduction to the field of
+					encrypted computer vision using FHE and will cover the following topics.
+				<div style="display: flex; justify-content: center; margin-top: 2rem;">
+					<div class="outline-item"
+						style="max-width: 600px; width: 100%; padding: 1rem; border: 1px solid #ccc; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left;">
+						<h4><i class="fas fa-square-root-alt" style="margin-right: 0.5rem;"></i>Foundations of FHE
+							and its Modern Schemes</h4>
+						<h4><i class="fas fa-lock" style="margin-right: 0.5rem;"></i>Applications of Encrypted
+							Computer Vision with FHE</h4>
+						<h4><i class="fas fa-code" style="margin-right: 0.5rem;"></i>Hands-On Session</h4>
+					</div>
 				</div>
+				<br><br>
+
+				<i class="fas fa-bullseye"></i> The tutorial will also highlight emerging research at the intersection
+				of computer vision, machine learning, and homomorphic encryption. By the end, participants will gain the
+				knowledge and tools to explore and develop secure, privacy-aware vision applications.
+				</p>
 			</div>
 		</div>
+	</div>
+</section>
 
-		<div class="bigspacer"></div>
+<div class="bigspacer"></div>
+<div class="bigspacer"></div>
 
-		<section id="overview">
-			<div class="row">
-				<div class="col-lg-12">
-
-					<div class="smallhead">
-
-						<p>
-							<i class="fas fa-eye"></i>
-							Over the past decade, computer vision has become a foundational technology in a wide range
-							of
-							applications, including facial recognition, medical diagnostics, surveillance, and social
-							media.
-							As these systems become more advanced and proprietary, they also raise significant concerns
-							about privacy and security. For instance, when a user uploads a facial image to a
-							cloud-based
-							recognition service, the user seeks to protect their biometric identity, while the service
-							provider aims to safeguard its proprietary model and private data. This creates complex but
-							important challenges.
-						</p>
-
-						<p>
-							<i class="fas fa-lock"></i>
-							Data encryption is a widely used method to address privacy concerns; however, conventional
-							encryption schemes require data to be decrypted prior to processing, which introduces
-							security
-							risks. Fully Homomorphic Encryption (FHE) offers a transformative alternative by enabling
-							computations directly on encrypted data without exposing the underlying sensitive
-							information.
-							This is akin to performing operations while keeping the data completely hidden. In addition,
-							FHE
-							provides post-quantum security, making it resilient to future quantum threats. This is
-							particularly valuable in privacy-critical domains such as healthcare, where compliance with
-							regulations like the Health Insurance Portability and Accountability Act (HIPAA) is
-							essential,
-							or in cloud environments that are not be fully trusted.
-						</p>
-
-						<p>
-							<i class="fas fa-exclamation-triangle"></i>
-							Integrating computer vision (CV) with FHE is significantly challenging due to the complexity
-							of
-							computer vision models. FHE supports only a limited set of arithmetic operations, such as
-							addition and multiplication, which are not sufficient for the complex, nonlinear functions
-							used
-							in typical CV models. These models often rely on operations such as ReLU, batch
-							normalization,
-							and pooling, which are not natively supported under FHE. Furthermore, computations on
-							encrypted
-							data are computationally intensive and memory-hungry, resulting in high latency and large
-							memory
-							footprints. To design effective CV systems under FHE constraints, it is essential to balance
-							multiple objectives including accuracy, efficiency, and resource usage, while also
-							developing
-							FHE-compatible architectures.
-						</p>
-
-						<p>
-							<i class="fas fa-chart-line"></i>
-							Despite these challenges, significant progress has been made in building practical computer
-							vision applications with FHE. Examples include private image retrieval based on encrypted
-							embeddings, encrypted image classification, and fully encrypted end-to-end face recognition
-							systems. These advancements have been driven by both improvements in FHE scheme
-							implementations
-							and thoughtful redesigns of traditional CV systems to work within FHE constraints. The
-							success
-							of these real-world applications demonstrates the growing feasibility and importance of
-							secure,
-							privacy-preserving computer vision systems.
-						</p>
-
-						<p>
-							<i class="fas fa-chalkboard-teacher"></i>
-							This tutorial is designed to offer a detailed and accessible introduction to the field of
-							encrypted computer vision using FHE and will cover the following topics.
-						<div style="display: flex; justify-content: center; margin-top: 2rem;">
-							<div class="outline-item"
-								style="max-width: 600px; width: 100%; padding: 1rem; border: 1px solid #ccc; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left;">
-								<h4><i class="fas fa-square-root-alt" style="margin-right: 0.5rem;"></i>Foundations of
-									FHE
-									and its Modern Schemes</h4>
-								<h4><i class="fas fa-lock" style="margin-right: 0.5rem;"></i>Applications of Encrypted
-									Computer Vision with FHE</h4>
-								<h4><i class="fas fa-code" style="margin-right: 0.5rem;"></i>Hands-On Session</h4>
-							</div>
-						</div>
-						<br><br>
-
-						<i class="fas fa-bullseye"></i> The tutorial will also discuss emerging research directions at
-						the
-						intersection of computer vision, machine learning, and homomorphic encryption. By the end,
-						participants will be equipped with the knowledge and tools necessary to explore and develop
-						secure,
-						privacy-aware vision applications.
-						</p>
-
-					</div>
-
-
-				</div>
+<section id="schedule">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-map-marker-alt" style="color:#d9534f;"></i>
+				<a class="off">Location: CVPR 2025 (Room 205B)</a>
 			</div>
-		</section>
-
-		<div class="bigspacer"></div>
-		<div class="bigspacer"></div>
-
-		<section id="schedule">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-map-marker-alt" style="color:#d9534f;"></i>
-						<a class="off">Location: CVPR 2025 (Room 205B)</a>
-					</div>
-					<div class="spacer"></div>
-				</div>
+			<div class="spacer"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-calendar-alt" style="color:#5bc0de;"></i>
+				<a class="off">Schedule: June 12th, 2025</a>
 			</div>
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-calendar-alt" style="color:#5bc0de;"></i>
-						<a class="off">Schedule: June 12th, 2025</a>
-					</div>
-					<div class="spacer"></div>
-				</div>
+			<div class="spacer"></div>
+		</div>
+	</div>
+
+	<table border="5" cellspacing="0" align="center">
+		<!--<caption>Timetable</caption>-->
+		<tr>
+			<td align="center" height="50" width="100"><br>
+				<b>Time</b></br>
+			</td>
+			<td align="center" height="50" width="100"><br>
+				<b>Title</b>
+			</td>
+			<td align="center" height="50" width="100"><br>
+				<b>Speaker</b>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" height="50">9:00am-9:15am</td>
+			<td align="center" height="50"><a href="part0/index.html" target="_blank">Introduction</a></td>
+			<td align="center" height="50">Vishnu Boddeti</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3"><b>An Introduction to Fully Homomorphic Encryption</b></td>
+		</tr>
+		<tr>
+			<td align="center" height="50">9:15am-9:35am</td>
+			<td align="center" height="50"><a href="part1/index-1.html" target="_blank">Fundamentals of FHE</a>
+			</td>
+			<td align="center" height="50">Amina Bassit</td>
+		</tr>
+		<tr>
+			<td align="center" height="50">9:35am-9:55am</td>
+			<td align="center" height="50"><a href="/part1/index-2.html" target="_blank">FHE-Compatible Convolutional
+					Neural Networks</a></td>
+			<td align="center" height="50">Wei Ao</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3"><b>Applications of Encrypted Computer Vision with FHE</b></td>
+		</tr>
+		<tr>
+			<td align="center" height="50">9:55am-10:20am</td>
+			<td align="center" height="50"><a href="part2/index-1.html" target="_blank">Private Image Retrieval</a></td>
+			<td align="center" height="50">Amina Bassit</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3"><b>20 min Break</b></td>
+		</tr>
+		<tr>
+			<td align="center" height="50">10:40am-11:05am</td>
+			<td align="center" height="50"><a href="/part2/index-2.html" target="_blank">CryptoFace: End-to-End
+					Encrypted Face Recognition</a></td>
+			<td align="center" height="50">Wei Ao</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3"><b>Hands-On Session</b></td>
+		</tr>
+		<tr>
+			<td align="center" height="50">11:05am-11:30pm</td>
+			<td align="center" height="50"><a href="part3/index-1.html" target="_blank">Demo of Private Image
+					Retrieval</a></td>
+			<td align="center" height="50">Amina Bassit</td>
+		</tr>
+		<tr>
+			<td align="center" height="50">11:30am-11:55am</td>
+			<td align="center" height="50"><a href="/part3/index-3.html" target="_blank">CryptoFace: from Pytorch
+					Training to SEAL Inference</a></td>
+			<td align="center" height="50">Wei Ao</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="3"><b>Closing</b></td>
+		</tr>
+		<tr>
+			<td align="center" height="50">11:55am-12:00pm</td>
+			<td align="center" height="50">Closing Remarks and Q&A</a>
+			</td>
+			<td align="center" height="50">Vishnu Boddeti</td>
+		</tr>
+	</table>
+</section>
+
+<div class="bigspacer"></div>
+<div class="bigspacer"></div>
+
+<section id="materials">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-laptop-code" style="color:#d9534f;"></i>
+				<a class="off">Materials</a>
 			</div>
+			<div class="spacer"></div>
+			<p>We're excited to offer you a wealth of materials and interactive resources to enhance your
+				experience during our
+				tutorial. In addition to hands-on exercises and interactive Jupyter notebooks demonstrating
+				cutting-edge techniques in
+				encrypted template for image search and end-to-end encrypted face recognition, we've prepared a
+				variety of supportive resources to inspire
+				and engage you.</p>
 
-			<table border="5" cellspacing="0" align="center">
-				<!--<caption>Timetable</caption>-->
-				<tr>
-					<td align="center" height="50" width="100"><br>
-						<b>Time</b></br>
-					</td>
-					<td align="center" height="50" width="100"><br>
-						<b>Title</b>
-					</td>
-					<td align="center" height="50" width="100"><br>
-						<b>Speaker</b>
-					</td>
-				</tr>
-				<tr>
-					<td align="center" height="50">9:00am-9:15am</td>
-					<td align="center" height="50">Why Security and Privacy
-						Matter in Computer Vision?</td>
-					<td align="center" height="50">Vishnu Boddeti</td>
-				</tr>
-				<tr>
-					<td align="center" colspan="3"><b>An Introduction to Fully Homomorphic Encryption</b></td>
-				</tr>
-				<tr>
-					<td align="center" height="50">9:15am-9:35am</td>
-					<td align="center" height="50">Fundamentals of FHE
-					</td>
-					<td align="center" height="50">Amina Bassit</td>
-				</tr>
-				<tr>
-					<td align="center" height="50">9:35am-9:55am</td>
-					<td align="center" height="50">Re-Design CNNs for
-						Secure
-						Inference</td>
-					<td align="center" height="50">Wei Ao</td>
-				</tr>
-				<tr>
-					<td align="center" colspan="3"><b>Applications of Encrypted Computer Vision with FHE</b></td>
-				</tr>
-				<tr>
-					<td align="center" height="50">9:55am-10:20am</td>
-					<td align="center" height="50">Private Image Matching
-						and
-						Retrieval</td>
-					<td align="center" height="50">Amina Bassit</td>
-				</tr>
-				<tr>
-					<td align="center" colspan="3"><b>20 min Break</b></td>
-				</tr>
-				<tr>
-					<td align="center" height="50">10:40am-11:05am</td>
-					<td align="center" height="50">CryptoFace: End-to-End
-						Encrypted Face Recognition</td>
-					<td align="center" height="50">Wei Ao</td>
-				</tr>
-				<tr>
-					<td align="center" colspan="3"><b>Hands-On Session</b></td>
-				</tr>
-				<tr>
-					<td align="center" height="50">11:05am-11:30pm</td>
-					<td align="center" height="50">Demo of Private Image
-						Matching and Retrieval</td>
-					<td align="center" height="50">Amina Bassit</td>
-				</tr>
-				<tr>
-					<td align="center" height="50">11:30am-11:55am</td>
-					<td align="center" height="50">CryptoFace: from
-						Pytorch
-						Training to SEAL Inference</td>
-					<td align="center" height="50">Wei Ao</td>
-				</tr>
-				<tr>
-					<td align="center" colspan="3"><b>Closing</b></td>
-				</tr>
-				<tr>
-					<td align="center" height="50">11:55am-12:00pm</td>
-					<td align="center" height="50">Remarks and Q&A
-					</td>
-					<td align="center" height="50">Vishnu Boddeti</td>
-				</tr>
-			</table>
-		</section>
+			<p>We warmly invite you to explore the following resources, which have been thoughtfully curated
+				to
+				spark your curiosity
+				and support your learning journey:</p>
+			<ul>
+				<li><b><i class="fa-solid fa-blog"></i> Blog Posts on FHE:</b></li>
+				<ul>
+					<li><a href="https://www.jeremykun.com/2024/05/04/fhe-overview/" target="_blank">High-Level
+							Overview of FHE
+						</a></li>
+					<li><a href="https://openmined.org/blog/ckks-explained-part-1-simple-encoding-and-decoding/"
+							target="_blank">Explanation
+							of CKKS</a></li>
+					<li><a href="https://www.jeremykun.com/fhe-in-production/" target="_blank">FHE in
+							Real-World Production Systems</a></li>
+				</ul>
+				<li><b><i class="fa-brands fa-github"></i> Awesome GitHub Repositories:</b></li>
+				<ul>
+					<li>Microsoft SEAL: <a href="https://github.com/microsoft/SEAL"
+							target="_blank">https://github.com/microsoft/SEAL</a></li>
+				</ul>
+				<li><b>Other AI+FHE Talks:</b></li>
+				<ul>
+					<li><a href="https://hal.cse.msu.edu/talks/data-circuit-privacy-fhe/" target="_blank">Rethinking AI
+							Architectures for Data and Circuit Privacy</a></li>
+				</ul>
+			</ul>
+			<p>We are thrilled to welcome researchers, practitioners, and students to this half-day in-person
+				tutorial. We hope these
+				resources will spark new ideas and enhance your exploration of the exciting world of encrypted
+				computer vision.</p>
+		</div>
+	</div>
+</section>
 
-		<div class="bigspacer"></div>
-		<div class="bigspacer"></div>
+<div class="bigspacer"></div>
+<div class="bigspacer"></div>
 
-		<section id="materials">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-book" style="color:#d9534f;"></i>
-						<a class="off">Materials</a>
-					</div>
-					<div class="spacer"></div>
-					<p>We're excited to offer you a wealth of materials and interactive resources to enhance your
-						experience during our
-						tutorial. In addition to hands-on exercises and interactive Jupyter notebooks demonstrating
-						cutting-edge techniques in
-						encrypted template for image search and end-to-end encrypted face recognition, we've prepared a
-						variety of supportive resources to inspire
-						and engage you.</p>
-
-					<p>We warmly invite you to explore the following resources, which have been thoughtfully curated
-						to
-						spark your curiosity
-						and support your learning journey:</p>
-					<ul>
-						<li><b>Blog Posts on FHE:</b></li>
-						<ul>
-							<li><a href="https://www.jeremykun.com/2024/05/04/fhe-overview/" target="_blank">High-Level
-									Overview of FHE
-								</a></li>
-							<li><a href="https://openmined.org/blog/ckks-explained-part-1-simple-encoding-and-decoding/"
-									target="_blank">Explanation
-									of CKKS</a></li>
-							<li><a href="https://www.jeremykun.com/fhe-in-production/" target="_blank">FHE in
-									Real-World Production Systems</a></li>
-						</ul>
-						<li><b>Awesome GitHub Repositories:</b></li>
-						<ul>
-							<li>Microsoft SEAL: <a href="https://github.com/microsoft/SEAL"
-									target="_blank">https://github.com/microsoft/SEAL</a></li>
-						</ul>
-						<li><b>Other AI+FHE Talks:</b></li>
-						<ul>
-							<li><a href="hal.cse.msu.edu/talks/data-circuit-privacy-fhe/" target="_blank">Rethinking AI
-									Architectures for Data and Circuit Privacy</a></li>
-						</ul>
-					</ul>
-					<p>We are thrilled to welcome researchers, practitioners, and students to this half-day in-person
-						tutorial. We hope these
-						resources will spark new ideas and enhance your exploration of the exciting world of encrypted
-						computer vision.</p>
-				</div>
+<section id="speakers-and-organizers">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-users" style="color:black;"></i>
+				<a class="off">Speakers and Organizers</a>
 			</div>
-		</section>
+			<div class="spacer"></div>
+		</div>
+	</div>
 
-		<div class="bigspacer"></div>
-		<div class="bigspacer"></div>
+	<div class="row">
+		<div class="col memberbox">
+			<div class="media">
+			</div>
+		</div>
+		<div class="col memberbox">
+			<div class="media">
+				<a class="float-left" href="https://aminabassit.github.io/" target="_blank">
+					<figure>
+						<img width=160 class="mr-3" src="/assets/images/organizers/cropped-amina-bassit.jpg">
+						<figcaption style="text-align: center;">Amina Bassit</figcaption>
+					</figure>
+				</a>
+			</div>
+		</div>
+		<div class="col memberbox">
+			<div class="media">
+				<a class="float-left" href="https://wei-ao.github.io/" target="_blank">
+					<figure>
+						<img width=170 class="mr-3" src="/assets/images/organizers/Wei-Ao.jpg">
+						<figcaption style="text-align: center;">Wei Ao</figcaption>
+					</figure>
+				</a>
+			</div>
+		</div>
+		<div class="col memberbox">
+			<div class="media">
+				<a class="float-left" href="https://vishnu.boddeti.net" target="_blank">
+					<figure>
+						<img width=170 class="mr-3" src="/assets/images/organizers/cropped-vishnu-boddeti.jpg">
+						<figcaption style="text-align: center;">Vishnu Boddeti</figcaption>
+					</figure>
+				</a>
+			</div>
+		</div>
+		<div class="col memberbox"></div>
+	</div>
+</section>
 
-		<section id="speakers-and-organizers">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-users" style="color:black;"></i>
-						<a class="off">Speakers and Organizers</a>
-					</div>
-					<div class="spacer"></div>
-				</div>
+<div class="bigspacer"></div>
+<div class="bigspacer"></div>
+
+<section id="floor-plan">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-map-marker-alt" style="color:#d9534f;"></i>
+				<a class="off">Where to go?</a>
+			</div>
+			<div class="spacer"></div>
+		</div>
+	</div>
+	<img src="/assets/images/floor-plan.png" alt="Floor Plan" width="50%">
+</section>
+
+<div class="bigspacer"></div>
+<div class="bigspacer"></div>
+
+<section id="publications">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-book" style="color:#d9534f;"></i>
+				<a class="off">Selected Publications</a>
 			</div>
 
-			<div class="row">
-				<div class="col memberbox">
-					<div class="media">
-					</div>
-				</div>
-				<div class="col memberbox">
-					<div class="media">
-						<a class="float-left" href="https://aminabassit.github.io/" target="_blank">
-							<figure>
-								<img width=160 class="mr-3" src="/assets/images/organizers/cropped-amina-bassit.jpg">
-								<figcaption style="text-align: center;">Amina Bassit</figcaption>
-							</figure>
-						</a>
-					</div>
-				</div>
-				<div class="col memberbox">
-					<div class="media">
-						<a class="float-left" href="https://wei-ao.github.io/" target="_blank">
-							<figure>
-								<img width=170 class="mr-3" src="/assets/images/organizers/Wei-Ao.jpg">
-								<figcaption style="text-align: center;">Wei Ao</figcaption>
-							</figure>
-						</a>
-					</div>
-				</div>
-				<div class="col memberbox">
-					<div class="media">
-						<a class="float-left" href="https://vishnu.boddeti.net" target="_blank">
-							<figure>
-								<img width=170 class="mr-3" src="/assets/images/organizers/cropped-vishnu-boddeti.jpg">
-								<figcaption style="text-align: center;">Vishnu Boddeti</figcaption>
-							</figure>
-						</a>
-					</div>
-				</div>
-				<div class="col memberbox"></div>
+			<style>
+    .publication-note {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 0.3em;
+        margin-left: 1em;
+        margin-bottom: 0.5em;
+    }
+</style>
+
+<div class="publications-list">
+    <ol>
+        
+        
+        <li>
+            Wei Ao and Vishnu Naresh Boddeti. "<a href="https://hal.cse.msu.edu/papers/cryptoface-end-to-end-encrypted-face-recognition/" target="_blank">CryptoFace: end-to-end encrypted face recognition</a>", CVPR 2025
+            
+            <div class="publication-note"><em>First end-to-end encrypted face recognition, i.e., feature extraction, storage, and matching, under FHE.</em></div>
+            
+        </li>
+        
+        <li>
+            Amina Bassit, Florian Hahn, Raymond Veldhuis, Andreas Peter. "<a href="https://ieeexplore.ieee.org/abstract/document/10902488" target="_blank">Practical Biometric Search under Encryption: Meeting the NIST Runtime Requirement without Loss of Accuracy</a>", IEEE T-BIOM 2025
+            
+            <div class="publication-note"><em>A homomorphic multiplication free approach for encrypted private image retrieval, i.e., 1:N matching.</em></div>
+            
+        </li>
+        
+        <li>
+            Wei Ao and Vishnu Naresh Boddeti. "<a href="https://arxiv.org/abs/2310.08012" target="_blank">AutoFHE: Automated adaption of CNNs for efficient evaluation over FHE</a>", USENIX Security 2024
+            
+            <div class="publication-note"><em>A multi-objective optimization solution for automated design of CNNs for encrypted image classification under FHE.</em></div>
+            
+        </li>
+        
+        <li>
+            Amina Bassit, Florian Hahn, Raymond Veldhuis, and Andreas Peter. "<a href="https://ieeexplore.ieee.org/document/10347446" target="_blank">Improved Multiplication-Free Biometric Recognition under Encryption</a>", IEEE T-BIOM 2024
+            
+            <div class="publication-note"><em>Encrypted face verification, i.e., 1:1 matching without homomorphic multiplications.</em></div>
+            
+        </li>
+        
+        <li>
+            Joshua J Engelsma, Anil K Jain, and Vishnu Naresh Boddeti. "<a href="https://arxiv.org/abs/2003.12197" target="_blank">HERS: Homomorphically Encrypted Representation Search</a>", IEEE T-BIOM 2022
+            
+            <div class="publication-note"><em>First private image retrieval i.e., 1:N matching, over encrypted templates.</em></div>
+            
+        </li>
+        
+        <li>
+            Eunsang Lee, Joon-Woo Lee, Junghyun Lee, Young-Sik Kim, Yongjune Kim, Jong-Seon No, and Woosuk Choi. "<a href="https://proceedings.mlr.press/v162/lee22e.html" target="_blank">Low-complexity deep convolutional neural networks on fully homomorphic encryption using multiplexed parallel convolutions</a>", ICML 2022
+            
+            <div class="publication-note"><em>First demonstration of encrypted inference over deep ResNets.</em></div>
+            
+        </li>
+        
+        <li>
+            Vishnu Naresh Boddeti. "<a href="https://arxiv.org/abs/1805.00577" target="_blank">Secure Face Matching using Fully Homomorphic Encryption</a>", BTAS 2018
+            
+            <div class="publication-note"><em>First face verification i.e., 1:1 matching, over encrypted templates.</em></div>
+            
+        </li>
+        
+        <li>
+            Ryo Yonetani, Vishnu Naresh Boddeti, Kris M Kitani, and Yoichi Sato. "<a href="https://arxiv.org/abs/1704.02203" target="_blank">Privacy-preserving visual learning using doubly permuted homomorphic encryption</a>", ICCV 2017
+            
+            <div class="publication-note"><em>First homomorphic-encryption based privacy-preserving framework for learning visual classifiers from distributed private image features.</em></div>
+            
+        </li>
+        
+        <li>
+            Ran Gilad-Bachrach, Nathan Dowlin, Kim Laine, Kristin Lauter, Michael Naehrig, and John Wernsing. "<a href="https://proceedings.mlr.press/v48/gilad-bachrach16.html" target="_blank">Cryptonets: Applying neural networks to encrypted data with high throughput and accuracy</a>", ICLR 2016
+            
+            <div class="publication-note"><em>First demonstration of inference of shallow CNNs over encrypted images with 2300+ Google Scholar citations.</em></div>
+            
+        </li>
+        
+    </ol>
+</div>
+
+			<div class="spacer"></div>
+		</div>
+	</div>
+</section>
+
+<section id="contact">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="head">
+				<i class="fas fa-envelope" style="color:#d9534f;"></i>
+				<a class="off">Contact & Bio Sketches</a>
 			</div>
-		</section>
-
-		<div class="bigspacer"></div>
-		<div class="bigspacer"></div>
-
-		<section id="floor-plan">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-map-marker-alt" style="color:#d9534f;"></i>
-						<a class="off">Where to go?</a>
-					</div>
-					<div class="spacer"></div>
-				</div>
+			<div class="spacer">
+				<p>For further information or inquiries, please contact <a href="https://vishnu.boddeti.net"
+						target="_blank"></a>Vishnu Boddeti.</p>
 			</div>
-			<img src="/assets/images/floor-plan.png" alt="Floor Plan" width="50%">
-		</section>
+		</div>
+	</div>
+</section>
 
-		<div class="bigspacer"></div>
-		<div class="bigspacer"></div>
-
-		<section id="publications">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-book" style="color:#d9534f;"></i>
-						<a class="off">Selected Publications</a>
-					</div>
-
-					<div class="publications-list">
-						<ol>
-							<li><a href="" target="_blank">Wei Ao and Vishnu Naresh Boddeti. "CryptoFace: end-to-end
-									encrypted face recognition", CVPR 2025</a></li>
-							<li><a href="">Amina Bassit, Florian Hahn, Raymond Veldhuis, Andreas Peter. "Practical
-									Biometric Search under Encryption: Meeting the NIST Runtime Requirement without Loss
-									of Accuracy", IEEE T-BIOM 2025</a></li>
-							<li><a href="" target="_blank">Wei Ao and Vishnu Naresh Boddeti. "AutoFHE: Automated
-									adaption of CNNs for efficient evaluation over FHE", USENIX Security 2024</a></li>
-							<li><a href="" target="_blank">Amina Bassit, Florian Hahn, Raymond Veldhuis, and Andreas
-									Peter. "Improved Multiplication-Free Biometric Recognition under Encryption", IEEE
-									T-BIOM 2024</a></li>
-							<li><a href="" target="_blank">Eunsang Lee, Joon-Woo Lee, Junghyun Lee, Young-Sik Kim,
-									Yongjune Kim, Jong-Seon No, and Woosuk
-									Choi. "Low-complexity deep convolutional neural networks on fully homomorphic
-									encryption using mul-
-									tiplexed parallel convolutions", ICML 2022</a></li>
-							<li><a href="" target="_blank">Joshua J Engelsma, Anil K Jain, and Vishnu Naresh Boddeti.
-									"HERS: Homomorphically Encrypted
-									Representation Search", IEEE T-BIOM 2022</a></li>
-							<li><a href="" target="_blank">Vishnu Naresh Boddeti. "Secure Face Matching using Fully
-									Homomorphic Encryption", BTAS 2018</a></li>
-							<li><a href="" target="_blank">Ryo Yonetani, Vishnu Naresh Boddeti, Kris M Kitani, and
-									Yoichi Sato. "Privacy-preserving visual learning using doubly permuted homomorphic
-									encryption", ICCV 2017</a></li>
-							<li><a href="" target="_blank">Ran Gilad-Bachrach, Nathan Dowlin, Kim Laine, Kristin Lauter,
-									Michael Naehrig, and John Wernsing. "Cryptonets: Applying neural networks to
-									encrypted data with high throughput and accuracy", ICLR 2016</a></li>
-						</ol>
-					</div>
-
-					<div class="spacer"></div>
-				</div>
-			</div>
-		</section>
-
-		<section id="contact">
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="head">
-						<i class="fas fa-envelope" style="color:#d9534f;"></i>
-						<a class="off">Contact & Bio Sketches</a>
-					</div>
-					<div class="spacer">
-						<p>For further information or inquiries, please contact <a href="https://vishnu.boddeti.net"
-								target="_blank"></a>Vishnu Boddeti.</p>
-					</div>
-				</div>
-			</div>
-		</section>
 	</div>
 
 	<div id="footer"><span style="display:none">foo</span></div>
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-		gtag('config', 'UA-49985752-2');
-	</script>
+  gtag('config', 'UA-49985752-2');
+</script>
+
+
 </body>
 
 </html>

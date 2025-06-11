@@ -1,0 +1,1669 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Fundamentals of FHE</title>
+  <meta name="author" content="Amina Bassit">
+
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../../assets/revealjs/dist/theme/vishnu.css" id="theme">
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+  <!-- tikzjax -->
+  <link rel="stylesheet" type="text/css" href="../../assets/tikzjax/fonts.css">
+  <script src="../../assets/tikzjax/tikzjax.js"></script>
+
+  <!-- CDN for Ajax, plotly and fontawesome -->
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://kit.fontawesome.com/7a9386c7a8.js" crossorigin="anonymous"></script>
+
+  <!-- CDN for other stuff -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <style>
+    /* body {
+        background-color: #2b2b2b;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+      section {
+        padding: 40px;
+        text-align: center;
+      } */
+    #pearson-plot {
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+
+  <style>
+    .image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .image-block {
+      flex: 1;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .image-block img {
+      width: 100%;
+      height: auto;
+    }
+
+    .custom-image-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .custom-image-container .image-block img {
+      width: 100%;
+      max-width: 270px;
+    }
+  </style>
+
+  <!-- Theme used for syntax highlighted code -->
+  <style>
+    .reveal code,
+    .reveal .formula-source,
+    .reveal a {
+      color: #3F988E;
+    }
+
+    .reveal code {
+      padding: 0 0.25em;
+    }
+
+    .reveal pre.formula-source {
+      box-shadow: none;
+      font-size: 0.8em;
+    }
+
+    .reveal .formula,
+    .reveal .formula-source {
+      margin: 2.5rem 0;
+    }
+
+    .reveal li {
+      margin: 0.65em 0;
+    }
+
+    .reveal .formula.bigger {
+      font-size: 1.8em;
+    }
+
+    /*https://medium.com/@mandieq/beautiful-presentations-from-markdown-who-knew-it-could-be-so-easy-d279aa7f787a*/
+
+    #left {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: left;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #right {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      float: right;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #center {
+      margin-left: auto;
+      margin-right: auto;
+      float: center;
+      text-align: center;
+      z-index: -10;
+      font-size: 0.85em;
+      line-height: 1.5;
+    }
+
+    #alert {
+      background-color: #ff9800;
+      padding: 10px;
+    }
+
+    #customers {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td,
+    #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#customers tr:nth-child(even){background-color: #f2f2f2;}*/
+    #customers tr:hover {
+      background-color: #000000;
+    }
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #mytable {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #mytable td,
+    #mytable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    /*#mytable tr:nth-child(even){background-color: #f2f2f2;}*/
+    #mytable tr:hover {
+      background-color: #000000;
+    }
+
+    #mytable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      color: white;
+    }
+
+    .box {
+      width: 100%;
+      background-color: #333333;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding: 0px;
+      margin: 0px;
+      color: #eeeeec;
+    }
+
+    .box-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .red-box-header {
+      background-color: indianred;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .green-box-header {
+      background-color: #BAB86C;
+      color: black;
+      padding: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section data-background-iframe="../../../assets/viz/gradient/">
+  <p class="title">Fundamentals of Fully Homomorphic Encryption</p>
+  <br />
+  <p class="author">Amina Bassit</p>
+  <p class="subtitle"> Computer Vision over Homomorphically Encrypted Data </p>
+  <p class="subtitle"> CVPR 2025 Tutorial </p>
+  <p class="date">June 12, 2025</p>
+</section>
+
+<section>
+  <h2 class="r-fit-text">The blind spot of traditional encryption</h2>
+  <div id="left" class="r-stack" style="width: 60%; background-color:#333333;">
+    <img class="fragment" src="../assets/images/talks/base/classic-encryption-1.svg" width="90%" fill="#333333" />
+    <img class="fragment" src="../assets/images/talks/base/classic-encryption-2.svg" width="90%" fill="#000000" />
+  </div>
+  <div id="left" style="width: 40%; text-align: left;font-size: 60%;">
+    <img class="fragment" src="../assets/images/talks/base/enc-stages-1.svg" width="30%" />
+    <ul class="fragment"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
+      <ul>
+        <li>85% of breaches are cloud-based data</li>
+        <li>Average breach cost of $4.9M</li>
+        <li>9 months for identifying a breach</li>
+      </ul>
+    </ul>
+  </div>
+  <div id="left" style="width: 100%; font-size: 80%;">
+    <blockquote class="fragment">
+      Lack of end-to-end encryption, <span style="color: orange;">attackers gain a dangerous advantage.</span>
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">End-to-End encrypted data during processing is needed</h2>
+  <div id="left" class="r-stack" style="width: 60%">
+    <img src="../assets/images/talks/base/modern-encryption-1.svg" width="90%" />
+  </div>
+  <div id="left" style="width: 40%; text-align: left;font-size: 60%;">
+    <img class="fragment" src="../assets/images/talks/base/enc-stages-2.svg" width="30%" />
+    <ul class="fragment"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
+      <ul>
+        <li>Security AI adoption saved organizations an average of $2.2M</li>
+      </ul>
+    </ul>
+  </div>
+  <br>
+  <div id="left" style="width: 100%;">
+    <blockquote class="fragment">
+      Securing data throughout its lifecycle, including use, is now a <span style="color: orange;">business must.</span>
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">FHE is a Game-Changer for <span style="color: orange;">trustworthy AI</span> deployment</h2>
+  <br><br>
+  <div id="right" style="width: 30%">
+    <img src="../assets/images/talks/base/enc-stages-2.svg" width="80%" />
+  </div>
+  <div id="left" style="width: 70%">
+    <span style="font-style: italic; font-size: 90%">Fully homomorphic encryption enables models to run directly on
+      encrypted data <span style="color: #ff8080;">without ever decrypting them.</span></span>
+    <ul>
+      <ul style="font-size: 80%" class="fragment" data-fragment-index="1">
+        <li>Data $x$ and prediction $f(x)$ remain encrypted end-to-end.</li>
+        <li>Intermediate computations are encrypted, preventing leakage.</li>
+        <li>Preserves <span style="color: #ff8080">user and data owner privacy.</span></li>
+        <li>Applications: 🤖 Model inference/training and 🔍 searching over private data (🏥 healthcare, 💳 finance,
+          etc.).
+        </li>
+      </ul>
+    </ul>
+  </div>
+</section>
+
+
+<section>
+  <h2>Evolution of FHE schemes</h2>
+
+  <div id="center" style="width: 100%; margin-top: 7em;">
+
+    <div style="
+      position: absolute;
+      top: 72%;
+      left: 2%;
+      right: 2%;
+      height: 4px;
+      background: #eee;
+      z-index: 1;
+    "></div>
+
+    <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
+
+      <div class="fragment" data-fragment-index="0" style="text-align: center; transform: translate(-50px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://evervault.com/papers/rivest-adleman-dertouzos.pdf">Privacy
+            homomorphisms (1978)</a></div>
+      </div>
+
+      <div class="fragment" data-fragment-index="1" style="text-align: center; transform: translate(-150px, -120px);">
+        <div style="font-weight: bold;"><a
+            href="https://www.cs.cmu.edu/~odonnell/hits09/gentry-homomorphic-encryption.pdf">Gentry's Blueprint
+            (2009)</a></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="3" style="text-align: center; transform: translate(-150px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2011/277.pdf">BGV (2011)</a></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="4" style="text-align: center; transform: translate(-150px, -120px);">
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2012/144.pdf">BFV (2012)</a></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="5" style="text-align: center; transform: translate(-100px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2014/816.pdf">FHEW (2014)</a></div>
+      </div>
+
+      <div class="fragment" data-fragment-index="6" style="text-align: center; transform: translate(-100px, -120px);">
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2016/870.pdf">TFHE (2016)</a></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="7" style="text-align: center; transform: translate(-100px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2016/421.pdf">CKKS (2017)</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<!-- 
+<section>
+   <h2>Existing FHE schemes</h2>
+    <br>
+   <div id="center" , style="width: 100%">
+    <table id="mytable" style="width: 100%; font-size: 65%;">
+      <tr style="background-color: black;">
+        <td style="text-align: center;">Scheme</td>
+        <td style="text-align: center;">Security</td>
+        <td style="text-align: center;">Plaintext</td>
+        <td style="text-align: center;">SIMD</td>
+        <td style="text-align: center;">Bootstrapping</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="0">  
+        <td style="text-align: center;"><a href="https://eprint.iacr.org/2011/277.pdf">BGV (2011)</a></td>
+        <td style="text-align: center;">Ring LWE</td>
+        <td style="text-align: center;">Integer</td>
+        <td style="text-align: center;">CRT packing</td>
+        <td style="text-align: left;">Reduce noise after $n$ operations 🐌</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="1">
+        <td style="text-align: center;"><a href="https://eprint.iacr.org/2012/144.pdf">BFV (2012)</a></td>
+        <td style="text-align: center;">Ring LWE</td>
+        <td style="text-align: center;">Integer</td>
+        <td style="text-align: center;">CRT packing</td>
+        <td style="text-align: left;">Reduce noise after $n$ operations 🐌</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="2">
+        <td style="text-align: center;"><a href="https://eprint.iacr.org/2014/816.pdf">FHEW (2014)</a></td>
+        <td style="text-align: center;">LWE & Ring LWE</td>
+        <td style="text-align: center;">Binary</td>
+        <td style="text-align: center;"><i class="fas fa-times" style="color: #ff8080;"></i></td>
+        <td style="text-align: left; white-space: normal;">Reset noise after each operation ⚡</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="3">
+        <td style="text-align: center;"><a href="https://eprint.iacr.org/2016/870.pdf">TFHE (2016)</a></td>
+        <td style="text-align: center;">Torus LWE</td>
+        <td style="text-align: center;">Binary</td>
+        <td style="text-align: center;"><i class="fas fa-times" style="color: #ff8080;"></i></td>
+        <td style="text-align: left; white-space: normal;">Reset noise after each operation ⚡⚡</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="4">
+        <td style="text-align: center;"><a href="https://eprint.iacr.org/2016/421.pdf">CKKS (2017)</a></td>
+        <td style="text-align: center;">Ring LWE</td>
+        <td style="text-align: center;">Real & Complex</td>
+        <td style="text-align: center;">Polynomial rings</td>
+        <td style="text-align: left; white-space: normal;">Increase modulus level after $n$ operations 🐌</td>
+      </tr>
+    </table>
+  </div>
+</section>
+ -->
+
+<section>
+  <h2>Learning with Errors (LWE)</h2>
+  <div style="display: flex; align-items: flex-start; gap: 20px;">
+    <div style="width: 70%; font-size: 80%; text-align: left;">
+      <p>The LWE problem is a cornerstone of modern lattice-based cryptography and underpins the security of many FHE
+        schemes. </p>
+      <ul>
+        <li>
+          <strong>Decision LWE:</strong>
+          Distinguish between \((a_i,\,\langle a_i,\,s\rangle + e)\) and uniform random pairs \((a_i,\,r)\)
+        </li>
+        <li>
+          <strong>Search LWE:</strong>
+          Given a collection of samples $\{\bigl(a_i,\,\langle a_i,\,s\rangle + e_i\bigr)\}_{i=1}^{m}$, recover the
+          secret vector \(s\)
+        </li>
+      </ul>
+    </div>
+    <div style="width: 30%; text-align: center;">
+      <img src="../assets/images/talks/base/LWE-problem.svg" width="90%" />
+      <img src="../assets/images/talks/base/fhe/discrete-gaussian.svg" width="90%" style="margin-top: 1em;" />
+    </div>
+  </div>
+  <div id="left" style="width: 100%">
+    <blockquote style="font-size: 90%;">
+      LWE problem prevents attackers from breaking FHE schemes' security.
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">The Hardness Foundation of LWE-Based FHE</h2>
+  <div id="left" , style="width: 30%; font-size: 65%" class="fragment" data-fragment-index="0">
+    <center style="color: orange"><i class="fas fa-key"></i> Private Key</center>
+    <br />
+    $\mathbf{s} = \begin{bmatrix}10 \\ 82 \\ 50 \\ 51\end{bmatrix}$
+  </div>
+  <div id="right" , style="width: 70%; font-size: 65%">
+    <center class="fragment" data-fragment-index="1" style="color: greenyellow">
+      <i class="fas fa-lock"></i> Public Key
+    </center>
+    <div class="r-stack">
+      <div class="fragment current-visible" data-fragment-index="1">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \nonumber \\ 21w
+        + 19x + 30y + 48z &= 3508 \text{ } \nonumber \\ 4w + 24x + 33y + 38z &=
+        3848 \text{ } \nonumber \\ 8w + 20x + 84y + 61z &= 6225 \text{ }
+        \nonumber \\ \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="2">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \nonumber \\ 21w
+        + 19x + 30y + 48z &= 3508 \text{ } \nonumber \\ 4w + 24x + 33y + 38z &=
+        3848 \text{ } \nonumber \\ 8w + 20x + 84y + 61z &= 6225 \text{ }
+        \nonumber \\ \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="3">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \nonumber \\ 21w
+        + 19x + 30y + 48z &= 3508 \text{ } \nonumber \\ 4w + 24x + 33y + 38z &=
+        3848 \text{ } \nonumber \\ 8w + 20x + 84y + 61z &= 6225 \text{ }
+        \nonumber \\ \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="4">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \color{#ff8080}{
+        + \text{ } (-3)} \nonumber \\ 21w + 19x + 30y + 48z &= 3508 \text{ }
+        \color{#ff8080}{ + \text{ } (+2)} \nonumber \\ 4w + 24x + 33y + 38z &=
+        3848 \text{ } \color{#ff8080}{ + \text{ } (-1)} \nonumber \\ 8w + 20x +
+        84y + 61z &= 6225 \text{ } \color{#ff8080}{ \underbrace{+ \text{ }
+        (+0)}_{noise}}\nonumber \\ \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="5">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \color{#ff8080}{
+        + \text{ } (-3)} \nonumber \\ 21w + 19x + 30y + 48z &= 3508 \text{ }
+        \color{#ff8080}{ + \text{ } (+2)} \nonumber \\ 4w + 24x + 33y + 38z &=
+        3848 \text{ } \color{#ff8080}{ + \text{ } (-1)} \nonumber \\ 8w + 20x +
+        84y + 61z &= 6225 \text{ } \color{#ff8080}{ \underbrace{+ \text{ }
+        (+0)}_{noise}}\nonumber \\ \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="6">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \color{#ff8080}{
+        + \text{ } (-3)} \color{cyan}{\text{ (mod 89)}} \nonumber \\ 21w + 19x +
+        30y + 48z &= 3508 \text{ } \color{#ff8080}{ + \text{ } (+2)}
+        \color{cyan}{\text{ (mod 89)}} \nonumber \\ 4w + 24x + 33y + 38z &= 3848
+        \text{ } \color{#ff8080}{ + \text{ } (-1)} \color{cyan}{\text{ (mod
+        89)}} \nonumber \\ 8w + 20x + 84y + 61z &= 6225 \text{ }
+        \color{#ff8080}{ \underbrace{+ \text{ } (+0)}_{noise}}\text{
+        }\color{cyan}{\underbrace{\text{(mod 89)}}_{ring}} \nonumber \\
+        \end{align} \]
+      </div>
+      <div class="fragment current-visible" data-fragment-index="7">
+        \[ \begin{align} 77w + 7x + 28y + 23z &= 2859 \text{ } \color{#ff8080}{
+        + \text{ } (-3)} \color{cyan}{\text{ (mod 89)}} \nonumber \\ 21w + 19x +
+        30y + 48z &= 3508 \text{ } \color{#ff8080}{ + \text{ } (+2)}
+        \color{cyan}{\text{ (mod 89)}} \nonumber \\ 4w + 24x + 33y + 38z &= 3848
+        \text{ } \color{#ff8080}{ + \text{ } (-1)} \color{cyan}{\text{ (mod
+        89)}} \nonumber \\ 8w + 20x + 84y + 61z &= 6225 \text{ }
+        \color{#ff8080}{ \underbrace{+ \text{ } (+0)}_{noise}}\text{
+        }\color{cyan}{\underbrace{\text{(mod 89)}}_{ring}} \nonumber \\
+        \end{align} \]
+      </div>
+    </div>
+  </div>
+  <div id="left" , style="width: 100%">
+    <blockquote class="fragment" data-fragment-index="2" style="font-size: 90%">
+      Breaking FHE $\Leftrightarrow$ Solving LWE problem: recovering
+      <span style="color: orange">private key</span> from
+      <span style="color: greenyellow">public key</span>.
+    </blockquote>
+    <table id="mytable" style="width: 100%; font-size: 65%" class="fragment" data-fragment-index="3">
+      <tr>
+        <td>System</td>
+        <td>Problem</td>
+        <td>Complexity</td>
+        <td>Solution</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="3">
+        <td>$b=As$ in $\mathbb{R}$</td>
+        <td>System of Linear Equations</td>
+        <td>P</td>
+        <td>Gaussian Elimination</td>
+      </tr>
+      <tr class="fragment" data-fragment-index="5">
+        <td>$b=As+e$ in $\mathbb{R}$</td>
+        <td>Least Squares Problem</td>
+        <td>P</td>
+        <td>Least Squares Estimator</td>
+      </tr>
+      <tr style="color: orange">
+        <td class="fragment" data-fragment-index="6">$b=As+e \mod q$ in $\mathbb{Z}_q$</td>
+        <td class="fragment" data-fragment-index="7">
+          Learning with Errors Problem
+        </td>
+        <td class="fragment" data-fragment-index="7">NP-hard</td>
+        <td class="fragment" data-fragment-index="7">
+          No known efficient algorithm (not even quantum)
+        </td>
+      </tr>
+      <tr style="color: orange">
+        <td class="fragment" data-fragment-index="7">$b(X)=A(X)s(X)+e(X) \mod q$ in $\mathbb{Z}_q[X]/(X^N+1)$</td>
+        <td class="fragment" data-fragment-index="7">
+          Ring Learning with Errors Problem
+        </td>
+        <td class="fragment" data-fragment-index="7">NP-hard</td>
+        <td class="fragment" data-fragment-index="7">
+          No known efficient algorithm (not even quantum)
+        </td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Pipeline of Homomorphic Evaluation of Encrypted Data</h2>
+  <img src="../assets/images/talks/base/FHE-pipeline.svg" width="100%" />
+  <br /><br /><br />
+  <div id="left" style="width: 50%">
+    <blockquote>Encoding/Decoding</blockquote>
+    <blockquote>Key generation</blockquote>
+  </div>
+  <div id="left" style="width: 50%">
+    <blockquote>Encryption/Decryption</blockquote>
+    <blockquote>Evaluation</blockquote>
+  </div>
+</section>
+
+<section>
+  <h2>Data Encoding and decoding</h2>
+  <img src="../assets/images/talks/base/FHE-encoding.svg" width="100%" />
+  <blockquote class="fragment" data-fragment-index="0">
+    Ex: CKKS encoding operates in the cyclotomic ring $\mathbb{Z}_q[X]/(X^N+1)$
+  </blockquote>
+  <div class="r-stack">
+    <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/CKKS-encoding-decoding.svg"
+      width="100%" />
+  </div>
+</section>
+
+<section>
+  <h2>Key generation</h2>
+  <img src="../assets/images/talks/base/FHE-KeyGen.svg" width="100%" />
+  <div id="left" class="fragment" data-fragment-index="0" style="font-size: 60%; width: 100%;">
+    <ul class="fragment" data-fragment-index="0" style="font-size: 110%; ">Example of CKKS Keys</ul>
+    <span>
+      <ul>
+        <li><i class="fas fa-key" style="color: orange;"></i> Private key: $sk = s(X)$</li>
+        <ul>
+          <li>$s(X)\in \mathbb{Z}[X]/(X^N+1)$ sampled from $\mathbb{Z}[X]/(X^N+1)$ with coefficients in $\{-1,0,1\}$.
+          </li>
+        </ul>
+        <li><i class="fas fa-lock" style="color: yellowgreen;"></i> Public key: $pk=(a(X),b(x))$
+          <ul>
+            <li>$a(X)$ sampled at random from $\mathbb{Z}_q[X]/(X^N+1)$</li>
+            <li>$b(X) = -a(X) \cdot s(X)+e(X) \mod q$ where $e(X)$ is a small error sampled.</li>
+          </ul>
+        </li>
+        <li><i class="fas fa-lock" style="color: yellowgreen;"></i> Evaluation keys: $evK$
+          <ul>
+            <li>Relinearization keys for ciphertext size reduction.</li>
+            <li>Rotation keys to enable rotate and conjugate.</li>
+          </ul>
+        </li>
+      </ul>
+    </span>
+  </div>
+</section>
+
+
+<section>
+  <h2>Security parameters selection</h2>
+  <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <div id="left" style="width: 50%; padding-right: 2%; margin-left: 0em;">
+      <div id="securityPlot1" style="width: 600px; height: 500px;"></div>
+    </div>
+    <div id="right" class="fragment" data-fragment-index="0" style="width: 40%; margin-top: 2em;">
+      <div class="box" style="width: 100%">
+        <div class="white-box-header" style="font-size: 80%;"><a
+            href="https://homomorphicencryption.org/wp-content/uploads/2024/08/Homomorphic-Encryption-Standard-v1.1.pdf">FHE
+            Standard Security Parameters</a></div>
+        <div class="box-content" style="font-size: 75%">
+          <table id="mytable" style="width: 100%; font-size: 65%;">
+            <tr style="background-color: black;">
+              <td style="text-align: center;">Security</td>
+              <td style="text-align: center;">$N$</td>
+              <td style="text-align: center;">$log_2(q)$</td>
+              <td style="text-align: center;">Pt Slots ($\frac{N}{2}$)</td>
+              <td style="text-align: center;">Mult Depth</td>
+            </tr>
+            <tr>
+              <td rowspan="2"
+                style="text-align: center; vertical-align: middle; position: relative; white-space: nowrap;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  128 bits
+                </div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  128 bits
+                </div>
+              </td>
+              <td style="text-align: center;">8192</td>
+              <td style="text-align: center;">218 bits</td>
+              <td style="text-align: center;position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  4096</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  4096</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color:#333333; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  4096</div>
+              </td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color:#333333; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center;">16384</td>
+              <td style="text-align: center;">438 bits</td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+              </td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  7</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  7</div>
+              </td>
+            </tr>
+            <tr>
+              <td rowspan="2"
+                style="text-align: center; vertical-align: middle; position: relative; white-space: nowrap;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  192 bits</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  192 bits</div>
+              </td>
+              <td style="text-align: center;">16384</td>
+              <td style="text-align: center;">307 bits</td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+              </td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="position: absolute; left: 50%; transform: translateX(-50%);">5</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center;">32768</td>
+              <td style="text-align: center;">620 bits</td>
+              <td style="text-align: center;">16384</td>
+              <td style="text-align: center;">8</td>
+            </tr>
+            <tr>
+              <td rowspan="2"
+                style="text-align: center; vertical-align: middle; position: relative; white-space: nowrap;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  256 bits </div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  256 bits </div>
+              </td>
+              <td style="text-align: center;">16384</td>
+              <td style="text-align: center;">239 bits</td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  8192</div>
+              </td>
+              <td style="text-align: center;position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  3</div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  3</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center;">32768</td>
+              <td style="text-align: center;">440 bits</td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  16384</div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: green; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  16384 </div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: #333333; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  16384</div>
+              </td>
+              <td style="text-align: center; position: relative;">
+                <div class="fragment" data-fragment-index="0"
+                  style="background-color: #333333; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5 </div>
+                <div class="fragment" data-fragment-index="1"
+                  style="background-color: purple; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5 </div>
+                <div class="fragment" data-fragment-index="2"
+                  style="background-color: #333333; width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;">
+                  5 </div>
+              </td>
+            </tr>
+          </table>
+          <a style="font-size: 65%;" href="https://github.com/malb/lattice-estimator">Try the Lattice Estimator and</a>
+          <a style="font-size: 65%;" href="https://www.zama.ai/post/estimating-the-security-of-homomorphic-schemes">read
+            more</a>
+        </div>
+      </div>
+      <blockquote class="fragment" data-fragment-index="3" style="font-size: 60%; text-align: center;">
+        Higher security allows more packing at fixed depth, but reduces depth at fixed packing.
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <h2>Encryption and Decryption</h2>
+  <img src="../assets/images/talks/base/FHE-encryption.svg" width="100%" />
+  <blockquote class="fragment" data-fragment-index="0" style="font-size: 100%;">
+    Ex: CKKS ciphertext is composed of two polynomials.
+  </blockquote>
+  <div id="right" , style="width: 40%" class="fragment" data-fragment-index="1">
+    <img src="../assets/images/talks/base/ct-validity-2.svg" width="60%" />
+  </div>
+  <div id="left" style="width: 60%" class="fragment" data-fragment-index="1">
+    <ul style="font-size: 75%">
+      <li><i class="fas fa-lock" style="color: yellowgreen;"> Encryption</i></li>
+      <ul>
+        <li>$\left[\!\left[ m \right]\!\right]=(c_0(X),c_1(X))$</li>
+        <ul>
+          <li>$c_0(X) = b(X) \cdot r(X) + m(X) \mod q$</li>
+          <li>$c_1(X) = a(X) \cdot r(X) \mod q$</li>
+          <li>$r(X)$ sampled at random from $\mathbb{Z}_q[X]/(X^N+1)$</li>
+        </ul>
+      </ul>
+      <li><i class="fas fa-lock-open" style="color: orange"> Decryption</i></li>
+      <ul>
+        <li>$\tilde{m}(X) = \text{round} (c_0(X) + c_1(X) \cdot s(X) \mod q) $</li>
+      </ul>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text"><span style="color: orange">Bootstrapping</span> enables <span style="color: orange">unlimited
+      HE operations</span> over encrypted data</h2>
+  <div class="r-stack">
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-1.svg" width="100%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-2.svg" width="100%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-3.svg" width="100%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-4.svg" width="100%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-5.svg" width="100%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-6.svg" width="100%" />
+    <img class="fragment" src="../assets/images/talks/base/Bootstrapping-7.svg" width="100%" />
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">FHE Schemes support basic HE capabilities</h2>
+  <img src="../assets/images/talks/base/FHE-eval.svg" width="100%" />
+  <br /><br />
+  <div class="r-stack">
+    <img class="fragment current-visible" src="../assets/images/talks/base/fhe/encryption-ops-1.svg" width="90%" />
+    <img class="fragment current-visible" src="../assets/images/talks/base/fhe/encryption-ops-2.svg" width="90%" />
+    <img class="fragment" src="../assets/images/talks/base/fhe/encryption-ops-3.svg" width="90%" />
+  </div>
+</section>
+
+
+<section>
+  <h2>Data Packing and SIMD operations</h2>
+  <img src="../assets/images/talks/base/FHE-packing.svg" width="100%" />
+  <div id="left" style="width: 50%">
+    <div class="r-stack">
+      <img class="fragment current-visible" src="../assets/images/talks/base/simd-1.svg" width="100%" />
+      <img class="fragment" src="../assets/images/talks/base/simd-2.svg" width="100%" />
+    </div>
+  </div>
+  <div id="right" style="width: 45%">
+    <ul class="fragment" style="font-size: 75%">
+      <img src="../assets/images/talks/base/fhee-packing.svg" width="80%" />
+    </ul>
+  </div>
+  <div id="left" style="width: 100%">
+    <blockquote class="fragment">Choosing the <span style="color: orange;">right packing</span> scheme significantly
+      <span style="color: orange;">reduces latency.</span>
+    </blockquote>
+  </div>
+</section>
+
+<section>
+  <h2 style="text-align: center;">Existing FHE schemes</h2>
+
+  <div id="center" style="width: 100%; margin-top: 7em;">
+
+
+    <div style="
+      position: absolute;
+      top: 72%;
+      left: 2%;
+      right: 2%;
+      height: 4px;
+      background: #eee;
+      z-index: 1;
+    "></div>
+
+    <div style="display: flex; justify-content: center; flex-wrap: nowrap;">
+
+
+      <div class="fragment" data-fragment-index="0" style="text-align: center; transform: translate(280px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2011/277.pdf">BGV (2011)</a></div>
+        <div style="transform: scale(0.7); transform-origin: center; display: inline-block;">
+          <table style="font-size: 60%;">
+            <tr style="background-color: black; color: white;">
+              <td>Security</td>
+              <td>Plaintext</td>
+              <td>SIMD</td>
+              <td>Bootstrapping</td>
+            </tr>
+            <tr class="fragment" data-fragment-index="0">
+              <td>Ring LWE</td>
+              <td>Integer</td>
+              <td>CRT packing</td>
+              <td>Reduce noise after <em>n</em> ops 🐌</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="1" style="text-align: center; transform: translate(100px, -120px);">
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2012/144.pdf">BFV (2012)</a></div>
+        <div style="transform: scale(0.7); transform-origin: center; display: inline-block;">
+          <table style="font-size: 60%;">
+            <tr style="background-color: black; color: white;">
+              <td>Security</td>
+              <td>Plaintext</td>
+              <td>SIMD</td>
+              <td>Bootstrapping</td>
+            </tr>
+            <tr class="fragment" data-fragment-index="1">
+              <td>Ring LWE</td>
+              <td>Integer</td>
+              <td>CRT packing</td>
+              <td>Reduce noise after <em>n</em> ops 🐌</td>
+            </tr>
+          </table>
+        </div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="2" style="text-align: center; transform: translate(-60px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2014/816.pdf">FHEW (2014)</a></div>
+        <div style="transform: scale(0.7); transform-origin: center; display: inline-block;">
+          <table style="font-size: 60%;">
+            <tr style="background-color: black; color: white;">
+              <td>Security</td>
+              <td>Plaintext</td>
+              <td>SIMD</td>
+              <td>Bootstrapping</td>
+            </tr>
+            <tr class="fragment" data-fragment-index="2">
+              <td>LWE & Ring LWE</td>
+              <td>Binary</td>
+              <td><span style="color: #ff8080;">✘</span></td>
+              <td>Reset noise after op ⚡</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="fragment" data-fragment-index="3" style="text-align: center; transform: translate(-180px, -120px);">
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2016/870.pdf">TFHE (2016)</a></div>
+        <div style="transform: scale(0.7); transform-origin: center; display: inline-block;">
+          <table style="font-size: 60%;">
+            <tr style="background-color: black; color: white;">
+              <td>Security</td>
+              <td>Plaintext</td>
+              <td>SIMD</td>
+              <td>Bootstrapping</td>
+            </tr>
+            <tr class="fragment" data-fragment-index="3">
+              <td>Torus LWE</td>
+              <td>Binary</td>
+              <td><span style="color: #ff8080;">✘</span></td>
+              <td>Reset noise per op ⚡⚡</td>
+            </tr>
+          </table>
+        </div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+      </div>
+
+
+      <div class="fragment" data-fragment-index="4" style="text-align: center; transform: translate(-300px, 120px);">
+        <div style="width: 16px; height: 16px; background: #555; border-radius: 50%; margin: auto;"></div>
+        <div style="width: 2px; height: 60px; background: #999; margin: auto;"></div>
+        <div style="font-weight: bold;"><a href="https://eprint.iacr.org/2016/421.pdf">CKKS (2017)</a></div>
+        <div style="transform: scale(0.7); transform-origin: center; display: inline-block;">
+          <table style="font-size: 60%;">
+            <tr style="background-color: black; color: white;">
+              <td>Security</td>
+              <td>Plaintext</td>
+              <td>SIMD</td>
+              <td>Bootstrapping</td>
+            </tr>
+            <tr class="fragment" data-fragment-index="4">
+              <td>Ring LWE</td>
+              <td style="border: 3px solid #ff8080;">Real & Complex</td>
+              <td>Polynomial rings</td>
+              <td>Increase modulus level after <em>n</em> ops 🐌</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Functions natively supported by FHE</h2>
+  <br /><br />
+  <div id="left" style="width: 50%">
+    <blockquote>Vector operations</blockquote>
+    <blockquote>Squared Euclidean distance</blockquote>
+  </div>
+  <div id="left" style="width: 50%">
+    <blockquote>Polynomial evaluation</blockquote>
+    <blockquote>Matrix operations</blockquote>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Vector operations Under Encryption</h2>
+  <br>
+  <div id="center" class="fragment" style="width: 80%">
+    <img src="../assets/images/talks/base/vector-op-add.svg" width="100%" />
+  </div>
+  <div id="center" class="r-stack" style="width: 80%">
+    <img class="fragment" src="../assets/images/talks/base/vector-op-mult.svg" width="100%" />
+    <img class="fragment" src="../assets/images/talks/base/vector-op-mult-2.svg" width="100%" />
+  </div>
+  <div id="center" class="fragment" style="width: 80%">
+    <img src="../assets/images/talks/base/vector-op-rot.svg" width="100%" />
+  </div>
+  <div id="center" class="fragment" style="width: 80%">
+    <img src="../assets/images/talks/base/vector-op-perf.svg" width="100%" />
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Squared Euclidean distance Under Encryption</h2>
+  <div id="left" style="width: 60%; font-size: 70%;">
+    <ul>
+      <ul>
+        <li>
+          Squared Euclidean distance $$\text{SED}(\mathbf{x},\mathbf{y}) =
+          \sum_{i=1}^{d} (x_i - y_i)^2$$
+        </li>
+        <li>
+          Encrypted SED
+          $$ct = \left[\!\left[ \mathbf{x} \right]\!\right] - \left[\!\left[ \mathbf{y} \right]\!\right] =
+          \left[\!\left[ x_1 -y_1, \cdots, x_d -y_d \right]\!\right]$$
+          $$ct' = ct \times ct = \left[\!\left[ (x_1 -y_1)^2, \cdots, (x_d -y_d)^2 \right]\!\right]$$
+          $$\left[\!\left[ \text{SED}(\mathbf{x},\mathbf{y}) \right]\!\right] = \sum_{i=1}^{\log_2(d)} \text{rot}(ct',
+          2^i)$$
+        </li>
+      </ul>
+    </ul>
+  </div>
+  <div id="right" style="width: 40%; ">
+    <div class="box">
+      <div class="red-box-header" style="font-size: 75%">
+        Complexity
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        <ul>Additions: $\log_2(d)$</ul>
+        <ul>Multiplications: $1$</ul>
+        <ul>Rotations: $\log_2(d)$</ul>
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="green-box-header" style="font-size: 75%">
+        Latency
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        Low latency that depends on $d$.
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="box-header" style="font-size: 75%">
+        Applications
+      </div>
+      <div class="box-content" style="font-size: 70%;">
+        <!-- <a href="">Embedding-based matching</a> and <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1155/2021/8759922">secure KNN classification.</a> -->
+        <center>
+          <img src="../assets/images/talks/base/FR-matching.svg" width="90%">
+        </center>
+        <span style="text-align: center;">Face recognition</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2>Inner product Under Encryption</h2>
+  <div id="left" style="width: 60%; font-size: 70%">
+    <ul>
+      <ul>
+        <li>
+          For normalized $\mathbf{\tilde{x}}$ and $\mathbf{\tilde{y}}$, cosine
+          becomes inner product (IP): $$< \mathbf{\tilde{x}},\mathbf{\tilde{y}}>
+            = \sum_{i=1}^{d} \tilde{x_i} \tilde{y_i}$$
+        </li>
+        <li>
+          Encrypted IP $$ct = \left[\!\left[ \mathbf{\tilde{x}} \right]\!\right] \times \left[\!\left[
+          \mathbf{\tilde{y}} \right]\!\right] = \left[\!\left[ (\tilde{x_1} \tilde{y_1}, \cdots, \tilde{x_d}
+          \tilde{y_d}) \right]\!\right]$$
+          $$\left[\!\left[ < \mathbf{\tilde{x}},\mathbf{\tilde{y}}>\right]\!\right] = \sum_{i=1}^{\log_2(d)}
+            \text{rot}(ct, 2^i)$$
+        </li>
+      </ul>
+    </ul>
+  </div>
+  <div id="right" style="width: 40%;">
+    <div class="box">
+      <div class="red-box-header" style="font-size: 75%">
+        Complexity
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        <ul>Additions: $\log_2(d)-1$</ul>
+        <ul>Multiplications: $1$</ul>
+        <ul>Rotations: $\log_2(d)$</ul>
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="green-box-header" style="font-size: 75%">
+        Latency
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        Low latency that depends on $d$.
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="box-header" style="font-size: 75%">
+        Applications
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center; ">
+        <!-- <a href="https://hal.cse.msu.edu/papers/secure-face-matching/">Biometric matching.</a> -->
+        <center>
+          <img src="../assets/images/talks/base/FR-matching.svg" width="90%">
+        </center>
+        <span style="text-align: center;">Face recognition</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 class="r-fit-text">Polynomial evaluation Under Encryption</h2>
+  <div id="left" style="width: 60%; font-size: 70%">
+    <ul>
+      <ul>
+        <li>
+          Polynomial evaluation $$P(X) = a_0 + a_1 X + a_2 X^2 + \cdots + a_n X^n$$
+
+        <li>Viewed as an inner product $P(X) = <\mathbb{a}, \mathbb{X}>$</li>
+        <ul>
+          <li>$\mathbb{a} = (a_0, a_1, \cdots, a_n)$</li>
+          <li>$\mathbb{X} = (1, X^1, \cdots, X^n)$</li>
+        </ul>
+
+        </li>
+        <li>
+          Encrypted polynomial evaluation
+          <ul>
+            <li>Pt-Ct multiplication $ct = \mathbb{a} \times \left[\!\left[ \mathbb{X} \right]\!\right]$</li>
+            <li>Ct-Ct multiplication $ct = \left[\!\left[ \mathbb{a} \right]\!\right] \times \left[\!\left[ \mathbb{X}
+              \right]\!\right]$</li>
+          </ul>
+          $$\left[\!\left[ P(X) \right]\!\right] = \sum_{i=0}^{n} a_i \cdot \text{rot}(ct, i)$$
+        </li>
+      </ul>
+    </ul>
+  </div>
+  <div id="right" style="width: 40%; margin-top: 2em;">
+    <div class="box">
+      <div class="red-box-header" style="font-size: 75%">
+        Complexity
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        <ul>Additions: $\log_2(n+1)-1$</ul>
+        <ul>Multiplications: $1$</ul>
+        <ul>Rotations: $\log_2(n+1)$</ul>
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="green-box-header" style="font-size: 75%">
+        Latency
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        Low latency that depends on $n$.
+      </div>
+    </div>
+    <br>
+    <div class="box">
+      <div class="box-header" style="font-size: 75%">
+        Applications
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center;">
+        <!-- <a href="">Polynomial approximation of non-linear functions such as activation functions.</a> -->
+        <center>
+          <div style="width: 100%;">
+            <div style="width: 30%; display: inline-block; ">
+              <figcaption>Sigmoid</figcaption>
+              <img src="../assets/images/talks/base/sigmoid.svg" width="80%">
+            </div>
+            <div style="width: 30%; display: inline-block; ">
+              <figcaption>ReLU</figcaption>
+              <img src="../assets/images/talks/base/ReLU.svg" width="85%">
+            </div>
+            <div style="width: 30%; display: inline-block; ">
+              <figcaption>GELU</figcaption>
+              <img src="../assets/images/talks/base/gelu.svg" width="85%">
+            </div>
+          </div>
+        </center>
+        <span style="text-align: center;">Activation functions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Matrix operations Under Encryption</h2>
+  <span id="left">Matrix-vector multiplication</span>
+
+  <div style="width: 100%; font-size: 70%;">
+    <img src="../assets/images/talks/base/mat-vect.svg" width="100%" />
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(0.8);">
+    <div class="box" style="width: 30%;">
+      <div class="red-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        <ul>
+          <li>Additions: $2$</li>
+        </ul>
+        <ul>
+          <li>Multiplications: $n$ rows</li>
+        </ul>
+        <ul>
+          <li>Rotations: $3$</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="box" style="width: 30%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Latency
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        Medium latency that depends on the matrix dimension.
+      </div>
+    </div>
+
+    <div class="box" style="width: 30%;">
+      <div class="box-header" style="font-size: 75%;">
+        Applications
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center; margin-left: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/linearProjection.svg" width="80%">
+        </center>
+        <span style="text-align: center;">Neural Networks</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="r-fit-text">Matrix operations Under Encryption</h2>
+  <span id="left">Matrix-Matrix multiplication</span>
+  <div id="center" style="width: 70%;">
+    <img src="../assets/images/talks/base/mat-mat.svg" width="90%" />
+  </div>
+  <div style="display: flex; justify-content: space-between; gap: 1em; transform: scale(0.8);">
+    <div class="box" style="width: 30%;">
+      <div class="red-box-header" style="font-size: 75%;">
+        Complexity
+      </div>
+      <div class="box-content" style="font-size: 60%; text-align: left; margin-left: 1em;">
+        <ul>
+          <li>Additions: $2$</li>
+        </ul>
+        <ul>
+          <li>Multiplications: $n \times m$</li>
+        </ul>
+        <ul>
+          <li>Rotations: $0$</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="box" style="width: 30%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Latency
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em;">
+        High latency that depends on the dimensions of the matrices.
+      </div>
+    </div>
+
+    <div class="box" style="width: 30%;">
+      <div class="box-header" style="font-size: 75%;">
+        Application
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: center;">
+        <!-- <a href="https://eprint.iacr.org/2024/136.pdf">Attention layer and feed forward parts of a transformer.</a> -->
+        <center>
+          <img src="../assets/images/talks/base/transformer.svg" width="70%">
+        </center>
+        <span style="text-align: center;">Transformers</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- <section>
+  <h2>Takeaways</h2>
+  <div id="left" style="width: 60%; font-size: 70%; text-align: left; margin-top: 1em;">
+    <ul>
+      <ul>
+        <li>FHE offers data protecting throughout its entire lifecycle.</li>
+        <li>The use of FHE requires</li>
+        <ul>
+            <li>Right <span style="color: #ff8080;">security parameters</span> selection</li>
+            <li>Adequate <span style="color: #ff8080;">packing scheme</span></li>
+            <li>Minimizing <span style="color: #ff8080;">#Multiplications</span> and <span style="color: #ff8080;">#Rotations</span></li>
+            <li>Applying <span style="color: #ff8080;">bootstrapping</span> before ciphertext levels are exhausted</li>
+        </ul>
+      </ul>
+    </ul>     
+      <center>
+        <img src="../assets/images/talks/base/Bootstrapping.svg" width="70%"/>
+      </center>
+  </div>
+<div id="right" style="width: 40%;  margin-top: 1em;">
+  <img src="../assets/images/talks/base/enc-stages-2.svg" width="30%">
+  <img src="../assets/images/talks/base/fhee-packing.svg" width="70%">
+  <img src="../assets/images/talks/base/vector-op-perf-2.svg" width="100%">
+  
+</div>
+</section> -->
+
+<section>
+  <h2>Takeaways</h2>
+  <div id="left" style="display: flex; justify-content: space-between; margin-bottom: -3em; transform: scale(0.8);">
+    <span>FHE offers data protection throughout its entire lifecycle.</span>
+    <div style="margin-top: -1em;">
+      <img src="../assets/images/talks/base/enc-stages-2.svg" width="30%">
+    </div>
+  </div>
+  <br>
+  <div id="center"
+    style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(0.8);">
+    <div class="box" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Right security parameters
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left;">
+        <center>
+          <div id="securityPlot2"
+            style="margin-left: -4em; margin-top: -6em; margin-bottom: -4em; transform: scale(0.7);"></div>
+        </center>
+      </div>
+    </div>
+    <div class="box" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Adequate packing scheme
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/fhee-packing.svg" width="100%">
+        </center>
+      </div>
+    </div>
+  </div>
+  <div id="center"
+    style="display: flex; justify-content: space-between; margin-top: -1em;  gap: 1em; transform: scale(0.8);">
+    <div class="box" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Minimize #Multiplications and #Rotations
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/vector-op-perf-2.svg" width="100%">
+        </center>
+      </div>
+    </div>
+    <div class="box" style="width: 50%;">
+      <div class="green-box-header" style="font-size: 75%;">
+        Apply bootstrapping to avoid exhausting ciphertexts
+      </div>
+      <div class="box-content" style="font-size: 70%; text-align: left; margin-left: 1em; margin-right: 1em;">
+        <center>
+          <img src="../assets/images/talks/base/Bootstrapping-0.svg" width="100%">
+        </center>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+
+
+<script>
+  function drawSecurityPlot(divId) {
+    const x = [0, 3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 33000, 35000];
+    const y = [20, 100, 180, 260, 320, 400, 480, 560, 640, 720, 800, 880, 920];
+
+    const depthLine = (xval) => {
+      return (380 / 35000) * xval + 300;
+    };
+
+
+    let intersectX = null;
+    let intersectY = null;
+
+    for (let i = 0; i < x.length - 1; i++) {
+      const y1 = y[i];
+      const y2 = y[i + 1];
+      const d1 = depthLine(x[i]);
+      const d2 = depthLine(x[i + 1]);
+
+      if ((y1 - d1) * (y2 - d2) < 0) {
+        const t = (d1 - y1) / ((y2 - y1) - (d2 - d1));
+        intersectX = x[i] + t * (x[i + 1] - x[i]);
+        intersectY = y1 + t * (y2 - y1);
+        break;
+      }
+    }
+
+    const lastX = x[x.length - 1];
+    const lastY = y[y.length - 1];
+    const depthYatLastX = depthLine(lastX);
+
+    const trianglePath = `M ${intersectX} ${intersectY} L ${lastX} ${lastY} L ${lastX} ${depthYatLastX} Z`;
+
+    const trace1 = {
+      x: x,
+      y: y,
+      mode: 'lines+markers',
+      name: 'Security Line',
+      line: { color: 'cyan', width: 3 }
+    };
+
+    const layout = {
+      xaxis: { title: { text: 'N', font: { color: 'lightgray', size: 16 } }, range: [0, 36000], showgrid: false, linecolor: 'lightgray', textcolor: 'lightgray', tickfont: { color: 'lightgray', size: 12 } },
+      yaxis: { title: { text: 'log(q)', font: { color: 'lightgray', size: 16 } }, range: [0, 1000], showgrid: false, linecolor: 'lightgray', textcolor: 'lightgray', tickfont: { color: 'lightgray', size: 12 } },
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      shapes: [
+        {
+          type: 'path',
+          path: trianglePath,
+          fillcolor: 'rgba(0,255,0,0.2)',
+          line: { color: 'rgba(0,0,0,0)' }
+        },
+        {
+          type: 'line',
+          x0: 0,
+          y0: 300,
+          x1: 35000,
+          y1: 680,
+          line: { color: '#ff8080', width: 3 }
+        }
+      ],
+      annotations: [
+        { x: 27000, y: 650, text: '★', showarrow: false, font: { size: 20, color: 'gold' } },
+        { x: 4000, y: 420, text: 'Correct', showarrow: true, arrowcolor: 'lightgray', arrowhead: 2, ax: 0, ay: -40, font: { color: '#ff8080', size: 14 } },
+        { x: 2500, y: 300, text: 'Incorrect', showarrow: true, arrowcolor: 'lightgray', arrowhead: 2, ax: 0, ay: 40, font: { color: '#ff8080', size: 14 }, textangle: -30 },
+        { x: 32000, y: 740, showarrow: true, arrowcolor: 'lightgray', arrowhead: 1, ax: -20, ay: -30 },
+        { x: 32000, y: 710, text: 'Secure', showarrow: false, font: { color: 'cyan', size: 14 }, textangle: -30 },
+        { x: 21000, y: 780, text: 'Insecure', showarrow: false, font: { color: 'cyan', size: 14 }, textangle: -30 },
+        { x: 21000, y: 750, showarrow: true, arrowcolor: 'lightgray', arrowhead: 2, ax: 30, ay: 40, font: { color: 'cyan', size: 14 } },
+        { x: 29000, y: 900, text: '128-bit Security', showarrow: false, font: { color: 'cyan', size: 14 }, textangle: -30 },
+        { x: 16000, y: 850, text: 'Inefficient', showarrow: true, arrowcolor: 'lightgray', arrowhead: 1, ax: -60, ay: 30, font: { color: 'lightpink', size: 14 } },
+        { x: 23000, y: 480, text: 'Mult Depth', showarrow: false, font: { color: '#ff8080', size: 14 }, textangle: -14 }
+      ]
+    };
+
+    Plotly.newPlot(divId, [trace1], layout);
+  }
+
+
+  drawSecurityPlot('securityPlot1');
+  drawSecurityPlot('securityPlot2');
+</script>
+
+    </div>
+  </div>
+
+  <script src="../../assets/revealjs/dist/reveal.js"></script>
+  <script src="../../assets/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../assets/revealjs/plugin/markdown/markdown.js"></script>
+  <script src="../../assets/revealjs/plugin/highlight/highlight.js"></script>
+  <script src="../../assets/revealjs/plugin/search/search.js"></script>
+  <script src="../../assets/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../assets/revealjs/plugin/math/math.js"></script>
+
+  <script src="../../assets/revealjs/plugin/menu/menu.js"></script>
+  <script src="../../assets/revealjs/plugin/pdfexport/pdfexport.js"></script>
+
+  <!-- chalkboard -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/chalkboard/style.css">
+  <script src="../../assets/revealjs/plugin/chalkboard/plugin.js"></script>
+
+  <!-- customcontrols -->
+  <link rel="stylesheet" href="../../assets/revealjs/plugin/customcontrols/style.css">
+  <script src="../../assets/revealjs/plugin/customcontrols/plugin.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <!-- chart -->
+  <script src="../../assets/revealjs/plugin/chart/Chart.min.js"></script>
+  <script src="../../assets/revealjs/plugin/chart/plugin.js"></script>
+
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins/menu/font-awesome/css/fontawesome.css">
+
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      mouseWheel: true,
+      hash: true,
+      autoPlayMedia: true,
+      transition: 'fade',
+      touch: true,
+
+      katex: {
+        version: 'latest',
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+
+      chalkboard: {
+        src: "",
+        eraser: { src: path + 'img/sponge.png', radius: 20 },
+        boardmarkers: [
+          { color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' },
+          { color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+          { color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+          { color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+          { color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+          { color: 'rgba(100,100,100,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+          { color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' }
+        ],
+        chalks: [
+          { color: 'rgba(255,255,255,0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+          { color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+          { color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+          { color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+          { color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+          { color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+          { color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+        ]
+      },
+
+      chart: {
+        defaults: {
+          global: {
+            title: { fontColor: "#FFF" },
+            legend: {
+              labels: { fontColor: "#FFF" },
+            },
+          },
+          scale: {
+            scaleLabel: { fontColor: "#FFF" },
+            gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+            ticks: { fontColor: "#FFF" },
+          }
+        },
+        line: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"], "borderDash": [[5, 10], [0, 0]] },
+        bar: { backgroundColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+        pie: { backgroundColor: [["rgba(0,0,0,.8)", "rgba(220,20,20,.8)", "rgba(20,220,20,.8)", "rgba(220,220,20,.8)", "rgba(20,20,220,.8)"]] },
+        radar: { borderColor: ["rgba(20,220,220,.8)", "rgba(220,120,120,.8)", "rgba(20,120,220,.8)"] },
+      },
+
+      customcontrols: {
+        controls: [
+          {
+            id: 'toggle-overview',
+            title: 'Toggle overview (O)',
+            icon: '<i class="fa fa-th" style="color:#5DA8A3"></i>',
+            action: 'Reveal.toggleOverview();'
+          },
+          {
+            icon: '<i class="fa fa-pen-square" style="color:#5DA8A3"></i>',
+            title: 'Toggle chalkboard (B)',
+            action: 'RevealChalkboard.toggleChalkboard();'
+          },
+          {
+            icon: '<i class="fa fa-pen" style="color:#5DA8A3"></i>',
+            title: 'Toggle notes canvas (C)',
+            action: 'RevealChalkboard.toggleNotesCanvas();'
+          }
+        ]
+      },
+
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealSearch, RevealChalkboard, RevealZoom, RevealMath.KaTeX, RevealMenu, PdfExport, RevealChart]
+    });
+  </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-49985752-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-49985752-2');
+</script>
+
+</body>
+
+</html>
