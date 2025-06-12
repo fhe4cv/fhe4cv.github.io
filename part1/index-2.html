@@ -295,7 +295,7 @@
   <div id="left" style="width:100%;">
     <blockquote class="fragment" data-fragment-index="9">Polynomial approximation for non-linear activations
     </blockquote>
-    <blockquote class="fragment" data-fragment-index="10">Packing for convolution (Pooling): transfering 3D operation
+    <blockquote class="fragment" data-fragment-index="10">Packing for convolution (Pooling): transferring 3D operation
       to 1D operation
     </blockquote>
   </div>
@@ -393,7 +393,7 @@
     <ul style="color: green">
       <ul style="font-size: 70%">
         <li class="fragment" data-fragment-index="2">Slow: more multiplications, more bootstrappings</li>
-        <li class="fragment" data-fragment-index="3">Accurate: high-degree polynoimals</li>
+        <li class="fragment" data-fragment-index="3">Accurate: high-degree polynomials</li>
         <li class="fragment" data-fragment-index="4">Training/fine-tuning: not necessary</li>
       </ul>
     </ul>
@@ -439,9 +439,10 @@
     </ul>
     <img src="../assets/images/talks/base/cryptoface_cvpr/chebyshev.png" width="60%">
     <ul style="font-size: 50%">
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Chebyshev_polynomials" linktarget="_blank">Chebyshev polynomials - Wikipedia</a>
-        </li>
+      <li>
+        <a href="https://en.wikipedia.org/wiki/Chebyshev_polynomials" linktarget="_blank">Chebyshev polynomials -
+          Wikipedia</a>
+      </li>
     </ul>
   </div>
   <div id="right" style="width:50%" class="fragment" data-fragment-index="4">
@@ -452,10 +453,11 @@
     </ul>
     <img src="../assets/images/talks/base/cryptoface_cvpr/hermite.png" width="60%">
     <ul style="font-size: 50%">
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Hermite_polynomials" linktarget="_blank">Hermite polynomials - Wikipedia</a>
-        </li>
-      </ul>
+      <li>
+        <a href="https://en.wikipedia.org/wiki/Hermite_polynomials" linktarget="_blank">Hermite polynomials -
+          Wikipedia</a>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -474,7 +476,7 @@
   </ul>
   <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="4">
     <ul>
-      <li>How many multiplications are required to evalaute the polynomial?</li>
+      <li>How many multiplications are required to evaluate the polynomial?</li>
     </ul>
   </ul>
   <ul style="font-size:100%;color:black" class="fragment" data-fragment-index="5">
@@ -505,14 +507,14 @@
     <img src="../assets/images/talks/base/cryptoface_cvpr/faster_cryptonet.png" width="70%" />
   </div>
   <div id="right" style="width: 100%">
-    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+    <ul style="color: rgb(60, 50, 205)" style="font-size: 60%">
       <li class="fragment" data-fragment-index="0">Low-degree polynomial approximation for non-linear activations</li>
     </ul>
     <ul style="color: rgb(50, 71, 205)">
       <ul style="font-size: 70%">
-        <li class="fragment" data-fragment-index="1">Swish: $p = 0.12050344x^2 +0.5x+0153613744$</li>
-        <li class="fragment" data-fragment-index="2">Softplus: $ p = 0082812671x^2 +05x+075248 $</li>
-        <li class="fragment" data-fragment-index="3">ReLU: $p = 0125x^2 +05x+025$ </li>
+        <li class="fragment" data-fragment-index="1">Swish: $p = 0.12050344x^2 +0.5x+0.153613744$</li>
+        <li class="fragment" data-fragment-index="2">Softplus: $ p = 0.082812671x^2 +0.5x+0.75248 $</li>
+        <li class="fragment" data-fragment-index="3">ReLU: $p = 0.125x^2 +0.5x+0.25$ </li>
       </ul>
     </ul>
     <ul style="color: rgb(201, 12, 9)" style="font-size: 60%">
@@ -533,7 +535,7 @@
     <img src="../assets/images/talks/base/cryptoface_cvpr/minimax.png" width="70%" />
   </div>
   <div id="right" style="width: 100%">
-    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+    <ul style="color: rgb(68, 50, 205)" style="font-size: 60%">
       <li class="fragment" data-fragment-index="0">High-degree polynomial approximation for ReLU </li>
     </ul>
     <ul style="color: rgb(50, 71, 205)">
@@ -566,7 +568,7 @@
       <li class="fragment" data-fragment-index="0">Polynomial neural network training suffers from numerical instability
       </li>
     </ul>
-    <ul style="color: rgb(50, 71, 205)">
+    <ul style="color: black">
       <ul style="font-size: 70%">
         <li class="fragment" data-fragment-index="1">Backward Propagation: clip gradients</li>
         <li class="fragment" data-fragment-index="2">Forward Propagation: cannot do clipping under FHE (function
@@ -575,7 +577,7 @@
     </ul>
   </div>
   <div id="right" style="width: 100%">
-    <ul style="color: rgb(205, 200, 50)" style="font-size: 60%">
+    <ul style="color: rgb(71, 50, 205)" style="font-size: 60%">
       <li class="fragment" data-fragment-index="3">AESPA: Basis-Wise Normalization</li>
     </ul>
     <ul style="color: rgb(50, 71, 205)">
@@ -599,7 +601,8 @@
 
 <section data-background="#511EA8" , id="packing">
   <h2>Packing for Convolutional Layers</h2>
-  <center>less <span style="color: red">rotations</span>, much <span style="color: green">faster</span> </center>
+  <center>less <span style="color: red">rotations</span>, much <span style="color: rgb(215, 230, 6)">faster</span>
+  </center>
 </section>
 
 <section data-background="white">

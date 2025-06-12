@@ -343,9 +343,9 @@
         <ul style="color: rgb(50, 71, 205)">
             <ul style="font-size: 70%">
                 <li class="fragment" data-fragment-index="3">Security: only feature protection</li>
-                <li class="fragment" data-fragment-index="1">Efficiency: fast to compute inter-product of two vectors
+                <li class="fragment" data-fragment-index="1">Efficiency: fast to compute inner-product of two vectors
                     under FHE</li>
-                <li class="fragment" data-fragment-index="2">Performance: preserve perforamcne thanks to negligible FHE
+                <li class="fragment" data-fragment-index="2">Performance: preserve performance thanks to negligible FHE
                     noise</li>
             </ul>
         </ul>
@@ -385,7 +385,7 @@
                 <li class="fragment" data-fragment-index="1">step 1: generate adversarial samples (features) and send
                     them to the server</li>
                 <li class="fragment" data-fragment-index="2">step 2: obtain similarity scores from the server</li>
-                <li class="fragment" data-fragment-index="3">step 3: solve a linear system to resover templates</li>
+                <li class="fragment" data-fragment-index="3">step 3: solve a linear system to recover templates</li>
             </ul>
         </ul>
     </div>
@@ -435,7 +435,7 @@
         </ul>
         <ul style="color: rgb(50, 205, 81)">
             <ul style="font-size: 70%">
-                <li class="fragment" data-fragment-index="1">The client cannot access to features.</li>
+                <li class="fragment" data-fragment-index="1">The client cannot access to features or networks.</li>
             </ul>
         </ul>
         <ul style="color: rgb(205, 53, 50)">
@@ -452,7 +452,7 @@
         <li>
             <a href="https://openaccess.thecvf.com/content/CVPR2025/papers/Ao_CryptoFace_End-to-End_Encrypted_Face_Recognition_CVPR_2025_paper.pdf"
                 linktarget="_blank"> <u>Wei Ao</u> and <u>Vishnu Boddeti</u>,
-                CrytoFace:
+                CryptoFace:
                 End-to-End Secure Face
                 Recognition, CVPR 2025</a>
         </li>
@@ -473,7 +473,7 @@
                 <li class="fragment" data-fragment-index="1">Security: provide security for face data and database</li>
                 <li class="fragment" data-fragment-index="2">Efficiency: it is slow to evaluate CNNs on encrypted images
                 </li>
-                <li class="fragment" data-fragment-index="3">Performance: it is hard to preserve perforamcne due to
+                <li class="fragment" data-fragment-index="3">Performance: it is hard to preserve performance due to
                     FHE-compatible CNNs</li>
             </ul>
         </ul>
@@ -529,7 +529,7 @@
 
 <section data-background="#511EA8" id="cryptofacenet">
     <h2>CryptoFaceNet: a mixture of CNNs</h2>
-    <center> Co-desining of <em>nueral architecture</em> and <em>FHE system</em>. </center>
+    <center> Co-designing of <em>neural architecture</em> and <em>FHE system</em>. </center>
 </section>
 
 <section data-background="white">
@@ -542,7 +542,8 @@
     <div id="right" style="width: 60%">
         <br />
         <ul style="color: rgb(16, 36, 187)">
-            <li class="fragment" data-fragment-index="0">How to desin FHE-compatible convolutional neural networks?</li>
+            <li class="fragment" data-fragment-index="0">How to design FHE-compatible convolutional neural networks?
+            </li>
         </ul>
         <ul style="color: rgb(16, 187, 19)">
             <li class="fragment" data-fragment-index="1">The objective is to reduce the complexity of rotation and
@@ -575,7 +576,7 @@
 
 <section data-background="white">
     <h2 style="color: black" class="r-fit-text">
-        Depth Optimal Convolutional Block
+        Depth-Optimal Convolutional Block
     </h2>
     <div id="left" style="width: 100%">
         <img src="../assets/images/talks/base/cryptoface_cvpr/cryptoface_block.png" width="100%" />
@@ -628,13 +629,13 @@
 
 <section data-background="white">
     <h2 style="color: black" class="r-fit-text">
-        polynomial approximation for similarity measures
+        polynomial approximation for similarity measure
     </h2>
     <img src="../assets/images/talks/base/cryptoface_cvpr/measure_app.svg" width="100%" />
 </section>
 
 <section data-background="#511EA8" id="benchmark">
-    <h2>benchmark cryptoface on standard face datasets</h2>
+    <h2>CryptoFace evaluation on standard face datasets</h2>
     <center> Face verification task </center>
 </section>
 
@@ -912,7 +913,7 @@
     </table>
     <ul style="font-size: 50%">
         <li>
-            <a href="https://hal.cse.msu.edu/papers"><u>Wei Ao</u> and <u>Vishnu Boddeti</u>, CrytoFace: End-to-End Secure
+            <a href="https://hal.cse.msu.edu/papers"><u>Wei Ao</u> and <u>Vishnu Boddeti</u>, CryptoFace: End-to-End Secure
                 Face
                 Recognition, CVPR 2025</a>
         </li>
@@ -952,13 +953,13 @@
 
 <section data-background="white">
     <h2 style="color: black" class="r-fit-text">
-        benchmark on ijbb and ijbc
+        Evaluation on IJB-B and IJB-C
     </h2>
     <img src="../assets/images/talks/base/cryptoface_cvpr/ijb.png" width="70%" />
 </section>
 
 <section>
-    <h2>Summary and Takeaway</h2>
+    <h2>Summary and Takeaways</h2>
     <figure><img src="../assets/images/talks/base/cryptoface_cvpr/target1.svg" alt="" width="70%"></figure>
     <ul>
         <ul style="font-size:75%">
@@ -966,7 +967,7 @@
             <li> <span style="color: aqua"> CryptoFaceNet </span> is efficient and scalable homomorphic architecture.
             </li>
             <li> <span style="color: aqua"> End-to-End Secure Face Recognition system </span> demonstrates security,
-                efficacy and good perforamcne on encrypted benchmarks.</li>
+                efficacy and good performance on encrypted benchmarks.</li>
         </ul>
     </ul>
 </section>

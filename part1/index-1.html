@@ -247,34 +247,33 @@
 <section>
   <h2 class="r-fit-text">The blind spot of traditional encryption</h2>
   <div id="left" class="r-stack" style="width: 60%; background-color:#333333;">
-    <img class="fragment" src="../assets/images/talks/base/classic-encryption-1.svg" width="90%" fill="#333333" />
-    <img class="fragment" src="../assets/images/talks/base/classic-encryption-2.svg" width="90%" fill="#000000" />
+    <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/classic-encryption-1.svg" width="90%" fill="#333333" />
+    <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/classic-encryption-2.svg" width="90%" fill="#000000" />
   </div>
   <div id="left" style="width: 40%; text-align: left;font-size: 60%;">
-    <img class="fragment" src="../assets/images/talks/base/enc-stages-1.svg" width="30%" />
-    <ul class="fragment"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
+    <img class="fragment" data-fragment-index="0" src="../assets/images/talks/base/enc-stages-1.svg" width="30%" />
+    <ul class="fragment" data-fragment-index="2"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
       <ul>
-        <li>85% of breaches are cloud-based data</li>
         <li>Average breach cost of $4.9M</li>
         <li>9 months for identifying a breach</li>
       </ul>
     </ul>
   </div>
   <div id="left" style="width: 100%; font-size: 80%;">
-    <blockquote class="fragment">
-      Lack of end-to-end encryption, <span style="color: orange;">attackers gain a dangerous advantage.</span>
+    <blockquote class="fragment" data-fragment-index="2">
+      Decryption causes <span style="color: orange;">costly damages</span> that are <span style="color: orange;">hard to recover from.</span>
     </blockquote>
   </div>
 </section>
 
 <section>
-  <h2 class="r-fit-text">End-to-End encrypted data during processing is needed</h2>
+  <h2 class="r-fit-text">Modern encryption provides <span style="color: orange;">Protection in use</span></h2>
   <div id="left" class="r-stack" style="width: 60%">
     <img src="../assets/images/talks/base/modern-encryption-1.svg" width="90%" />
   </div>
   <div id="left" style="width: 40%; text-align: left;font-size: 60%;">
-    <img class="fragment" src="../assets/images/talks/base/enc-stages-2.svg" width="30%" />
-    <ul class="fragment"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
+    <img src="../assets/images/talks/base/enc-stages-2.svg" width="30%" />
+    <ul class="fragment" data-fragment-index="3"><a href="https://www.ibm.com/reports/data-breach">IBM Security report (2024)</a>
       <ul>
         <li>Security AI adoption saved organizations an average of $2.2M</li>
       </ul>
@@ -282,22 +281,22 @@
   </div>
   <br>
   <div id="left" style="width: 100%;">
-    <blockquote class="fragment">
-      Securing data throughout its lifecycle, including use, is now a <span style="color: orange;">business must.</span>
+    <blockquote class="fragment" data-fragment-index="2">
+      Securing data in use is now a <span style="color: orange;">business must.</span>
     </blockquote>
   </div>
 </section>
 
 <section>
-  <h2 class="r-fit-text">FHE is a Game-Changer for <span style="color: orange;">trustworthy AI</span> deployment</h2>
+  <h2 class="r-fit-text">FHE can help <span style="color: orange;">AI models</span> achieve <span style="color: orange;">trustworthiness</span></h2>
   <br><br>
   <div id="right" style="width: 30%">
     <img src="../assets/images/talks/base/enc-stages-2.svg" width="80%" />
   </div>
-  <div id="left" style="width: 70%">
-    <span style="font-style: italic; font-size: 90%">Fully homomorphic encryption enables models to run directly on
-      encrypted data <span style="color: #ff8080;">without ever decrypting them.</span></span>
-    <ul>
+  <div id="left" style="width: 50%; margin-top:  4em;">
+    <blockquote style="font-style: italic; font-size: 90%">FHE enables AI models to <span style="color: orange;">process</span>
+      encrypted data <span style="color: orange;">without decryption.</span></blockquote>
+    <!-- <ul>
       <ul style="font-size: 80%" class="fragment" data-fragment-index="1">
         <li>Data $x$ and prediction $f(x)$ remain encrypted end-to-end.</li>
         <li>Intermediate computations are encrypted, preventing leakage.</li>
@@ -306,7 +305,7 @@
           etc.).
         </li>
       </ul>
-    </ul>
+    </ul> -->
   </div>
 </section>
 
@@ -437,7 +436,12 @@
 </section>
  -->
 
-<section>
+<section data-transition="slide" data-background="#b5533c">
+  <h2>Learning with Errors (LWE)</h2>
+    LWE problem prevents attackers from breaking FHE schemes' security
+</section>
+
+<!-- <section>
   <h2>Learning with Errors (LWE)</h2>
   <div style="display: flex; align-items: flex-start; gap: 20px;">
     <div style="width: 70%; font-size: 80%; text-align: left;">
@@ -465,7 +469,7 @@
       LWE problem prevents attackers from breaking FHE schemes' security.
     </blockquote>
   </div>
-</section>
+</section> -->
 
 <section>
   <h2 class="r-fit-text">The Hardness Foundation of LWE-Based FHE</h2>
@@ -590,7 +594,9 @@
 <section>
   <h2 class="r-fit-text">Pipeline of Homomorphic Evaluation of Encrypted Data</h2>
   <img src="../assets/images/talks/base/FHE-pipeline.svg" width="100%" />
-  <br /><br /><br />
+  <br /><br />
+  <span class="fragment">Using CKKS scheme as an example</span>
+  <br />
   <div id="left" style="width: 50%">
     <blockquote>Encoding/Decoding</blockquote>
     <blockquote>Key generation</blockquote>
@@ -620,20 +626,20 @@
     <ul class="fragment" data-fragment-index="0" style="font-size: 110%; ">Example of CKKS Keys</ul>
     <span>
       <ul>
-        <li><i class="fas fa-key" style="color: orange;"></i> Private key: $sk = s(X)$</li>
+        <li class="fragment"><i class="fas fa-key" style="color: orange;"></i> Private key: $sk = s(X)$</li>
         <ul>
-          <li>$s(X)\in \mathbb{Z}[X]/(X^N+1)$ sampled from $\mathbb{Z}[X]/(X^N+1)$ with coefficients in $\{-1,0,1\}$.
+          <li class="fragment">$s(X)\in \mathbb{Z}[X]/(X^N+1)$ sampled from $\mathbb{Z}[X]/(X^N+1)$ with coefficients in $\{-1,0,1\}$.
           </li>
         </ul>
-        <li><i class="fas fa-lock" style="color: yellowgreen;"></i> Public key: $pk=(a(X),b(x))$
-          <ul>
-            <li>$a(X)$ sampled at random from $\mathbb{Z}_q[X]/(X^N+1)$</li>
-            <li>$b(X) = -a(X) \cdot s(X)+e(X) \mod q$ where $e(X)$ is a small error sampled.</li>
+        <li class="fragment"><i class="fas fa-lock" style="color: yellowgreen;"></i> Public key: $pk=(a(X),b(x))$
+          <ul class="fragment">
+            <li class="fragment">$a(X)$ sampled at random from $\mathbb{Z}_q[X]/(X^N+1)$</li>
+            <li class="fragment">$b(X) = -a(X) \cdot s(X)+e(X) \mod q$ where $e(X)$ is a small error sampled.</li>
           </ul>
         </li>
-        <li><i class="fas fa-lock" style="color: yellowgreen;"></i> Evaluation keys: $evK$
-          <ul>
-            <li>Relinearization keys for ciphertext size reduction.</li>
+        <li class="fragment"><i class="fas fa-lock" style="color: yellowgreen;"></i> Evaluation keys: $evK$
+          <ul class="fragment">
+            <li>Multiplication keys for ciphertext size reduction.</li>
             <li>Rotation keys to enable rotate and conjugate.</li>
           </ul>
         </li>
@@ -836,22 +842,22 @@
   <blockquote class="fragment" data-fragment-index="0" style="font-size: 100%;">
     Ex: CKKS ciphertext is composed of two polynomials.
   </blockquote>
-  <div id="right" , style="width: 40%" class="fragment" data-fragment-index="1">
+  <div id="right" , style="width: 40%" class="fragment" data-fragment-index="3">
     <img src="../assets/images/talks/base/ct-validity-2.svg" width="60%" />
   </div>
-  <div id="left" style="width: 60%" class="fragment" data-fragment-index="1">
+  <div id="left" style="width: 60%">
     <ul style="font-size: 75%">
-      <li><i class="fas fa-lock" style="color: yellowgreen;"> Encryption</i></li>
-      <ul>
+      <li class="fragment" data-fragment-index="1"><i class="fas fa-lock" style="color: yellowgreen;"> Encryption</i></li>
+      <ul class="fragment" data-fragment-index="1">
         <li>$\left[\!\left[ m \right]\!\right]=(c_0(X),c_1(X))$</li>
         <ul>
-          <li>$c_0(X) = b(X) \cdot r(X) + m(X) \mod q$</li>
+          <li >$c_0(X) = b(X) \cdot r(X) + m(X) \mod q$</li>
           <li>$c_1(X) = a(X) \cdot r(X) \mod q$</li>
           <li>$r(X)$ sampled at random from $\mathbb{Z}_q[X]/(X^N+1)$</li>
         </ul>
       </ul>
-      <li><i class="fas fa-lock-open" style="color: orange"> Decryption</i></li>
-      <ul>
+      <li class="fragment"  class="fragment" data-fragment-index="2"><i class="fas fa-lock-open" style="color: orange"> Decryption</i></li>
+      <ul class="fragment" class="fragment" data-fragment-index="2">
         <li>$\tilde{m}(X) = \text{round} (c_0(X) + c_1(X) \cdot s(X) \mod q) $</li>
       </ul>
     </ul>
@@ -870,6 +876,8 @@
     <img class="fragment current-visible" src="../assets/images/talks/base/Bootstrapping-6.svg" width="100%" />
     <img class="fragment" src="../assets/images/talks/base/Bootstrapping-7.svg" width="100%" />
   </div>
+<br>
+  <div class="fragment" style="color: orange">Bootstrapping is very slow and need to be avoided</div>
 </section>
 
 <section>
@@ -889,17 +897,17 @@
   <img src="../assets/images/talks/base/FHE-packing.svg" width="100%" />
   <div id="left" style="width: 50%">
     <div class="r-stack">
-      <img class="fragment current-visible" src="../assets/images/talks/base/simd-1.svg" width="100%" />
-      <img class="fragment" src="../assets/images/talks/base/simd-2.svg" width="100%" />
+      <img class="fragment current-visible" data-fragment-index="0" src="../assets/images/talks/base/simd-1.svg" width="100%" />
+      <img class="fragment" data-fragment-index="1" src="../assets/images/talks/base/simd-2.svg" width="100%" />
     </div>
   </div>
   <div id="right" style="width: 45%">
-    <ul class="fragment" style="font-size: 75%">
+    <ul class="fragment" data-fragment-index="2" style="font-size: 75%">
       <img src="../assets/images/talks/base/fhee-packing.svg" width="80%" />
     </ul>
   </div>
   <div id="left" style="width: 100%">
-    <blockquote class="fragment">Choosing the <span style="color: orange;">right packing</span> scheme significantly
+    <blockquote class="fragment" data-fragment-index="2" >Choosing the <span style="color: orange;">right packing</span> scheme significantly
       <span style="color: orange;">reduces latency.</span>
     </blockquote>
   </div>
@@ -1081,7 +1089,7 @@
           Squared Euclidean distance $$\text{SED}(\mathbf{x},\mathbf{y}) =
           \sum_{i=1}^{d} (x_i - y_i)^2$$
         </li>
-        <li>
+        <li class="fragment">
           Encrypted SED
           $$ct = \left[\!\left[ \mathbf{x} \right]\!\right] - \left[\!\left[ \mathbf{y} \right]\!\right] =
           \left[\!\left[ x_1 -y_1, \cdots, x_d -y_d \right]\!\right]$$
@@ -1193,27 +1201,26 @@
       <ul>
         <li>
           Polynomial evaluation $$P(X) = a_0 + a_1 X + a_2 X^2 + \cdots + a_n X^n$$
-
-        <li>Viewed as an inner product $P(X) = <\mathbb{a}, \mathbb{X}>$</li>
-        <ul>
+        <li class="fragment" data-fragment-index="1">Viewed as an inner product $P(X) = <\mathbb{a}, \mathbb{X}>$</li>
+        <ul class="fragment" data-fragment-index="1">
           <li>$\mathbb{a} = (a_0, a_1, \cdots, a_n)$</li>
           <li>$\mathbb{X} = (1, X^1, \cdots, X^n)$</li>
         </ul>
 
         </li>
-        <li>
+        <li class="fragment" data-fragment-index="3">
           Encrypted polynomial evaluation
           <ul>
-            <li>Pt-Ct multiplication $ct = \mathbb{a} \times \left[\!\left[ \mathbb{X} \right]\!\right]$</li>
-            <li>Ct-Ct multiplication $ct = \left[\!\left[ \mathbb{a} \right]\!\right] \times \left[\!\left[ \mathbb{X}
+            <li class="fragment" data-fragment-index="3">Pt-Ct multiplication $ct = \mathbb{a} \times \left[\!\left[ \mathbb{X} \right]\!\right]$</li>
+            <li class="fragment" data-fragment-index="4" >Ct-Ct multiplication $ct = \left[\!\left[ \mathbb{a} \right]\!\right] \times \left[\!\left[ \mathbb{X}
               \right]\!\right]$</li>
-          </ul>
+          </ul class="fragment" data-fragment-index="5">
           $$\left[\!\left[ P(X) \right]\!\right] = \sum_{i=0}^{n} a_i \cdot \text{rot}(ct, i)$$
         </li>
       </ul>
     </ul>
   </div>
-  <div id="right" style="width: 40%; margin-top: 2em;">
+  <div class="fragment" data-fragment-index="5" id="right" style="width: 40%; margin-top: 2em;">
     <div class="box">
       <div class="red-box-header" style="font-size: 75%">
         Complexity

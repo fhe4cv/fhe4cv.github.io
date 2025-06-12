@@ -285,7 +285,7 @@
 
 
 <section>
-  <h2 class="r-fit-text">Most of Retrieval tasks are based on <span style="color: orange;">Embeddings</span></h2>
+  <h2 class="r-fit-text">Most Retrieval tasks are based on <span style="color: orange;">Embeddings</span></h2>
 
   <div id="center" style="width: 50%; margin-top: 1em; margin-bottom: 2em;">
     <br>
@@ -298,12 +298,13 @@
 
 
 <section>
-  <h2 class="r-fit-text">However embeddings leak sensitive information</h2>
+  <h2> Embeddings are not secure</h2>
+
+  <blockquote class="fragment" data-fragment-index="0" style="width: 50%; font-size: 75%;">Embeddings are vulnerable to
+    inversion attacks and reveal personal information</blockquote>
+
+
   <div id="left" style="width: 50%; font-size: 75%;">
-    <ul>
-      <li class="fragment" data-fragment-index="0">Embeddings are invertible</li>
-      <li class="fragment" data-fragment-index="1" style="color: #ff8080;">Inversion attacks</li>
-    </ul>
     <img class="fragment" data-fragment-index="2" style="margin-bottom: 0em;"
       src="../assets/images/talks/base/highResDiagram.png" width="90%" />
     <figcaption>
@@ -327,16 +328,18 @@
     </figcaption>
   </div>
   <div id="right" style="width: 50%; font-size: 75%;">
-    <ul>
-      <li class="fragment">Embeddings reveal sensitive information</li>
-      <li class="fragment" style="color: #ff8080;">Inference attacks</li>
-    </ul>
     <img class="fragment" style="margin-bottom: 0em;" src="../assets/images/talks/base/inferenceAttack-2.png"
       width="90%" />
     <figcaption>
       <a class="fragment" style="font-size: 60%;" href="https://arxiv.org/pdf/2303.09289" target="_blank">Information
         inference attack from image embeddings [25]</a>
     </figcaption>
+    <img src="/assets/images/talks/vec2text.png" width="100%">
+    <!-- <figcaption style="font-size: 80%;"><a
+                href="https://proceedings.neurips.cc/paper_files/paper/2023/file/29e4b51d45dc8f534260adc45b587363-Paper-Conference.pdf">[SM23]
+                High resolution image reconstruction</a>
+        </figcaption> -->
+
   </div>
 </section>
 
@@ -351,7 +354,7 @@
   <h2 class="r-fit-text">FHE Applications in computer vision and beyond</h2>
   <div id="center" class="box fragment" style="width: 50%;">
     <div class="red-box-header" style="font-size: 75%;">
-      Private Image-to-Image (Face Recognition)
+      Private Image-Image (Face Recognition)
     </div>
     <div class="box-content" style="font-size: 70%; text-align: center;">
       <img src="../assets/images/talks/base/FR-search.svg" width="50%" />
@@ -361,7 +364,7 @@
   <div style="display: flex; justify-content: space-between; margin-top: 0em; gap: 1em; transform: scale(0.8);">
     <div class="box fragment" style="width: 50%; background-color: white;">
       <div class="green-box-header" style="font-size: 75%;">
-        Private Text-to-Text (RAG)
+        Private Text-Text (RAG)
       </div>
       <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
         <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
@@ -369,7 +372,7 @@
     </div>
     <div class="box fragment" style="width: 50%; background-color: white;">
       <div class="green-box-header" style="font-size: 75%;">
-        Private Text-to-Image (CLIP)
+        Private Text-Image (CLIP)
       </div>
       <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
         <img src="../assets/images/talks/base/CLIP.png" width="90%" />
@@ -443,7 +446,7 @@
 
 
 <section data-background="#511EA8">
-  <h2>Private Image-to-Image</h2>
+  <h2>Private Image-Image</h2>
   (Face Recognition: Search)
 </section>
 
@@ -538,11 +541,7 @@
         <li class="fragment" data-fragment-index="6">Runs in $31.22$ ms for 128 bits security level.</li>
       </ul>
     </ul>
-    <br>
-    <div id="left" class="fragment" style="width: 100%; text-align: left; margin-left: 2em; font-size: 65%;">
-      Reducing <span style="color: cyan;">latency</span> $\implies$ Reducing <span
-        style="color: #ff8080">multiplications and rotations.</span>
-    </div>
+
   </div>
   <br>
   <div id="center"
@@ -591,7 +590,17 @@
   </div>
 </section>
 
+<section>
 
+  <h3>
+    Reducing <span style="color: cyan;">latency</span>
+    <br>
+    <span>$\Downarrow$</span>
+    <br>
+    Reducing <span style="color: #ff8080">multiplications and rotations.
+  </h3>
+
+</section>
 <section>
   <h2 class="r-fit-text"><span style="color: #ff8080">Idea to eliminate multiplications:</span> Pre-computing IP into a
     Lookup table</h2>
@@ -1362,7 +1371,9 @@
   </script>
 
   <!-- <span style="font-size: 75%; " ><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">[BOK+22]</a> records <span style="color: #d30b0b">$60.60h$ ($512$-dim),</span> <span style="color: #FB4166">$3.94h$ ($128$-dim),</span> <span style="color: #F08080">$1h$ ($64$-dim).</span></span>
-    <blockquote style="font-size: 75%;">Dimensionality reduction reduces the latency of both MFIP-based and HERS search</blockquote> -->
+     <blockquote style="font-size: 75%;">Dimensionality reduction reduces the latency of both MFIP-based and HERS search</blockquote> -->
+
+  <blockquote style="font-size: 75%;">Lookup table-based approach is practical (1:1M in $1.28s$)</blockquote>
 
   <div id="left" style="width: 100%; text-align: left; font-size: 45%;margin-top: 1em;">
     <!-- <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9794523">[BOK+22] Improved Homomorphically Encrypted Biometric Identification Using Coefficient Packing</a>  
@@ -1384,10 +1395,10 @@
   <h2 class="r-fit-text">MFIP Search Speed at scale using a <span style="color: orange;">single GPU (A100)</span></h2>
   <blockquote style="font-size: 75%;">FHE-based search takes $5min$ for a 1 Billion vector gallery with up to 512-dim
   </blockquote>
-  <div style="display: flex; width: 100%;transform: scale(1);">
-    <div id='32DimScalePlot' style="width: 33%;"></div>
-    <div id='128DimScalePlot' style="width: 33%;"></div>
-    <div id='512DimScalePlot' style="width: 33%;"></div>
+  <div id="center" style="display: flex; width: 100%;transform: scale(1);">
+    <!-- <div id='32DimScalePlot' style="width: 33%;"></div>
+    <div id='128DimScalePlot' style="width: 33%;"></div> -->
+    <div id='512DimScalePlot' style="width: 70%;"></div>
   </div>
   <br>
   <div id="left" style="width: 100%;">
@@ -1417,7 +1428,7 @@
         showline: true,
         color: 'white',
         mirror: true,
-        title: 'Runtime (seconds)',
+        title: 'Runtime (minutes)',
         gridcolor: 'rgba(255, 255, 255, 0.3)',
       },
       xaxis: {
@@ -1436,31 +1447,41 @@
     };
 
     var config = { responsive: true, displaylogo: false };
-    Plotly.newPlot('32DimScalePlot', [trace1], layout, config);
+    // Plotly.newPlot('32DimScalePlot', [trace1], layout, config);
 
-    var trace2 = {
+    // var trace2 = {
+    //   type: 'bar',
+    //   x: xlabels,
+    //   y: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
+    //   name: '128-dim',
+    //   marker: { color: '#C8A2C8' },
+    //   text: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
+    //   textposition: 'auto'
+    // };
+
+    // Plotly.newPlot('128DimScalePlot', [trace2], layout, config);
+
+    // var trace3 = {
+    //   type: 'bar',
+    //   x: xlabels,
+    //   y: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+    //   name: '512-dim',
+    //   marker: { color: '#C8C8A2' },
+    //   text: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+    //   textposition: 'auto'
+    // };
+
+    var trace4 = {
       type: 'bar',
       x: xlabels,
-      y: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
-      name: '128-dim',
-      marker: { color: '#C8A2C8' },
-      text: [0.248, 2.446, 24.440, 244.388, 2443.849, 24438.478, 244384.768],
-      textposition: 'auto'
-    };
-
-    Plotly.newPlot('128DimScalePlot', [trace2], layout, config);
-
-    var trace3 = {
-      type: 'bar',
-      x: xlabels,
-      y: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+      y: [0.0052, 0.0509, 0.5089, 5.0884, 50.8830, 508.8298, 5088.2976],
       name: '512-dim',
-      marker: { color: '#C8C8A2' },
-      text: [0.310, 3.056, 30.532, 305.302, 3052.980, 30529.787, 305297.855],
+      marker: { color: '#C8A2C8' },
+      text: [0.0052, 0.0509, 0.5089, 5.0884, 50.8830, 508.8298, 5088.2976],
       textposition: 'auto'
     };
 
-    Plotly.newPlot('512DimScalePlot', [trace3], layout, config);
+    Plotly.newPlot('512DimScalePlot', [trace4], layout, config);
   </script>
 </section>
 
@@ -1627,23 +1648,30 @@
 
 
 <section data-background="#511EA8">
-  <h2>Private Text-to-Text</h2>
+  <h2>Private Text-Text</h2>
   (Text Embedding-based Retrieval in RAG)
 </section>
 
 <section>
-  <h2 class="r-fit-text">Think text embeddings are private? <span style="color: orange;">Research shows otherwise</span></h2>
+  <h2 class="r-fit-text">Think text embeddings are private? <span style="color: orange;">Research shows otherwise</span>
+  </h2>
 
-  <div style="font-size: 85%; margin-top: 2em;">Storing embeddings instead of raw text <span style="color: #ff8080;">can still leak confidential data.</span></div>
+  <div style="font-size: 85%; margin-top: 2em;">Storing embeddings instead of raw text <span style="color: #ff8080;">can
+      still leak confidential data.</span></div>
 
-     <div style="margin-top: 2em; ">
+  <div id="center" style="width: 70%;">
+    <img src="/assets/images/talks/vec2text.png" width="100%">
+
+  </div>
+
+  <!-- <div style="margin-top: 2em; ">
     <iframe width="560" height="315"
       src="https://www.youtube.com/embed/4ZQLM2Pg0dE?start=210&end=350&autoplay=0&rel=0"
       frameborder="0"
       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
     </iframe>
-     </div>
+     </div> -->
 
 </section>
 
@@ -1793,7 +1821,7 @@
 
 
 <section data-background="#511EA8">
-  <h2>Private Text-to-Image</h2>
+  <h2>Private Text-Image</h2>
   (CLIP Embedding-based Retrieval)
 </section>
 
@@ -1953,7 +1981,7 @@
 </script>
 
 <!-- <section>
-    <h2 class="r-fit-text">Private text-to-image retrieval using ScoreUP</h2>
+    <h2 class="r-fit-text">Private text-image retrieval using ScoreUP</h2>
     <div class="box" id="center" style="background-color: white;  width: 80%; transform: scale(0.9);">
       <div class="box-content">
         <center>
@@ -1983,7 +2011,7 @@
   <div style="display: flex; justify-content: space-between; margin-top: 1em; gap: 1em; transform: scale(1);">
     <div class="box" style="width: 50%;">
       <div class="green-box-header" style="font-size: 75%;">
-        Private Image-to-Image (FR)
+        Private Image-Image (FR)
       </div>
       <div class="box-content" style="font-size: 70%; text-align: center;">
         <img src="../assets/images/talks/base/FR-search.svg" width="60%" />
@@ -1991,7 +2019,7 @@
     </div>
     <div class="box" style="width: 50%; background-color: white;">
       <div class="green-box-header" style="font-size: 75%;">
-        Private Text-to-Text (RAG)
+        Private Text-Text (RAG)
       </div>
       <div class="box-content" style="font-size: 70%; text-align: center;margin-bottom: -1em;">
         <img src="../assets/images/talks/base/overview-RAG-v4.svg" width="80%" />
@@ -1999,7 +2027,7 @@
     </div>
     <div class="box" style="width: 50%; background-color: white;">
       <div class="green-box-header" style="font-size: 75%;">
-        Private Text-to-Image (CLIP)
+        Private Text-Image (CLIP)
       </div>
       <div class="box-content" style="font-size: 70%; text-align: center; margin-top: 2em;margin-bottom: -1em;">
         <img src="../assets/images/talks/base/CLIP.png" width="90%" />
